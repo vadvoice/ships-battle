@@ -9,7 +9,7 @@ import {
   COLUMNS_AMOUNT,
   SHIP_DETAILS,
 } from '@/libs/config';
-import { getCoords } from '@/libs/helpers';
+import { getAffectedCells, getCoords } from '@/libs/helpers';
 import BattlefieldSettings from './BattlefieldSettings';
 
 export default function Battlefield({
@@ -52,7 +52,7 @@ export default function Battlefield({
         return;
       }
 
-      const affectedCells = getAffectedCells(e.target) || [];
+      const affectedCells = getAffectedCells(e.target, battlefieldTable, battlefield) || [];
       const isOverlapsWithExistingShips = battlefield.fleet.some(
         ({ position }) => {
           return affectedCells.map(getCoords).some((coord) => {
@@ -87,62 +87,21 @@ export default function Battlefield({
         ],
       });
     },
-    [battlefield, currentHighlightedCells, isGamePlanningComplete]
+    [
+      battlefield,
+      currentHighlightedCells,
+      isGamePlanningComplete,
+      setBattlefield,
+    ]
   );
-
-  /**
-   *
-   * @param {DOMElement} target clicked table cell
-   * @returns {Array} prediction of affected cells
-   */
-  const getAffectedCells = (target) => {
-    const targetCellIndex = Number(target.dataset.index);
-    const targetCellRow = Number(target.dataset.row);
-    const amountOfCellsToBeHightlightedHorizontally =
-      battlefield.currentShip.length + targetCellIndex;
-    const amountOfCellsToBeHightlightedVertically =
-      battlefield.currentShip.length + targetCellRow;
-
-    const affectedCells = [];
-    // just KISS
-    // regular horizontal placement
-    if (battlefield.horizontalPlacement) {
-      for (
-        let index = targetCellIndex;
-        index < amountOfCellsToBeHightlightedHorizontally;
-        index++
-      ) {
-        const cell = battlefieldTable.current.querySelector(
-          `td[data-index="${index}"][data-row="${targetCellRow}"]`
-        );
-
-        if (!cell) return;
-        affectedCells.push(cell);
-      }
-    } else {
-      // vertical placement
-      for (
-        let index = targetCellRow;
-        index < amountOfCellsToBeHightlightedVertically;
-        index++
-      ) {
-        const cell = battlefieldTable.current.querySelector(
-          `td[data-index="${targetCellIndex}"][data-row="${index}"]`
-        );
-        if (!cell) return;
-
-        affectedCells.push(cell);
-      }
-    }
-
-    return affectedCells;
-  };
 
   const hightlightShipOnBattlefield = (target) => {
     if (!target || isGamePlanningComplete) return;
     resetBattleFieldOngoingProcess();
 
-    (getAffectedCells(target) || []).map((el) => currentHighlightedCells.push(el));
+    (getAffectedCells(target, battlefieldTable, battlefield) || []).map((el) =>
+      currentHighlightedCells.push(el)
+    );
 
     currentHighlightedCells.map((el) => {
       el.classList.add(COLOR_SCHEMA.hover);
