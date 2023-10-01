@@ -16,7 +16,8 @@ export const SHIP_DETAILS = [
 
 export const COLOR_SCHEMA = {
   hover: 'bg-slate-400',
-  placed: 'bg-neutral-900',
+  // placed: 'bg-neutral-900',
+  placed: 'dark:bg-gray-700 bg-neutral-900',
   damage: 'bg-orange-600',
   empty: 'bg-teal-50',
   dynamicHoverColor: 'rgb(148 163 184)',

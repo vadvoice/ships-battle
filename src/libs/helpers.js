@@ -16,24 +16,24 @@ export const getCoords = (domEl) => {
  * @returns {Array} prediction of affected cells
  */
 export const getAffectedCells = (target, battlefieldTable, battlefield) => {
-  const targetCellIndex = Number(target.dataset.index);
-  const targetCellRow = Number(target.dataset.row);
+  const targetColIndex = Number(target.dataset.index);
+  const targetRowIndex = Number(target.dataset.row);
   const amountOfCellsToBeHightlightedHorizontally =
-    battlefield.currentShip.length + targetCellIndex;
+    battlefield.currentShip.length + targetColIndex;
   const amountOfCellsToBeHightlightedVertically =
-    battlefield.currentShip.length + targetCellRow;
+    battlefield.currentShip.length + targetRowIndex;
 
   const affectedCells = [];
   // just KISS
   // regular horizontal placement
   if (battlefield.horizontalPlacement) {
     for (
-      let index = targetCellIndex;
+      let index = targetColIndex;
       index < amountOfCellsToBeHightlightedHorizontally;
       index++
     ) {
       const cell = battlefieldTable.current.querySelector(
-        `td[data-index="${index}"][data-row="${targetCellRow}"]`
+        `td[data-index="${index}"][data-row="${targetRowIndex}"]`
       );
 
       if (!cell) return;
@@ -42,13 +42,14 @@ export const getAffectedCells = (target, battlefieldTable, battlefield) => {
   } else {
     // vertical placement
     for (
-      let index = targetCellRow;
+      let index = targetRowIndex;
       index < amountOfCellsToBeHightlightedVertically;
       index++
     ) {
       const cell = battlefieldTable.current.querySelector(
-        `td[data-index="${targetCellIndex}"][data-row="${index}"]`
+        `td[data-index="${targetColIndex}"][data-row="${index}"]`
       );
+
       if (!cell) return;
 
       affectedCells.push(cell);
