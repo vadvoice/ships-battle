@@ -50,6 +50,12 @@ export default function GameSettings({
     return (
       <div className="flex justify-center p-2 flex-col mt-5">
         done
+        <button
+          onClick={onReset}
+          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+        >
+          Reset
+        </button>
       </div>
     );
   }
