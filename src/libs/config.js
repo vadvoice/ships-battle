@@ -2,8 +2,18 @@ export const GAME_STAGES = {
   menu: 0,
   planning: 1,
   planningComplete: 2,
-  ongoing: 3,
-  gameover: 4,
+  ready: 3,
+  ongoing: 4,
+  gameover: 5,
+};
+
+export const GAME_STAGE_MAP = {
+  0: 'Menu',
+  1: 'Planning',
+  2: 'Planning Complete',
+  3: 'Ready',
+  4: 'Game',
+  5: 'gameover',
 };
 
 export const SHIP_DETAILS = [

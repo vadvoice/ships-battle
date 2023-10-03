@@ -13,8 +13,22 @@ export default function BattlefieldSettings({
   if (isPlanningStage) {
     return (
       <div className="flex justify-center p-2 flex-col mt-5">
-        <h4 className="text-2xl font-bold dark:text-white">Settings:</h4>
+        <h4 className="text-xl font-bold dark:text-white">Settings:</h4>
 
+        <div className="flex justify-between">
+          <button
+            onClick={autoGenerate}
+            className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+          >
+            Autogenerate
+          </button>
+          <button
+            onClick={onReset}
+            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+          >
+            Reset
+          </button>
+        </div>
         {/* // ship position  */}
         <div className="my-2 flex">
           <label className="relative inline-flex items-center cursor-pointer">
@@ -65,42 +79,29 @@ export default function BattlefieldSettings({
             )}
           </div>
         </div>
-
-        <div className='flex justify-between'>
-          <button
-            onClick={autoGenerate}
-            className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-          >
-            Autogenerate
-          </button>
-          <button
-            onClick={onReset}
-            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-          >
-            Reset
-          </button>
-        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-between p-2 mt-5">
-      <label>
+    <div className="flex justify-between p-2 mt-5 flex-col">
+      <h4 className="text-xl font-bold dark:text-white">Settings:</h4>
+
+      <div className="flex justify-between">
         <button
           onClick={onReady}
           className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
         >
           I&apos;m ready!
         </button>
-      </label>
 
-      <button
-        onClick={onReset}
-        className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-      >
-        Reset
-      </button>
+        <button
+          onClick={onReset}
+          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+        >
+          Reset
+        </button>
+      </div>
     </div>
   );
 }

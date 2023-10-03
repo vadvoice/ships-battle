@@ -31,8 +31,6 @@ export default function Battlefield({
   const battlefieldTable = useRef();
   const isMenuState = battlefield.stage === GAME_STAGES.menu;
   const isPlanningStage = battlefield.stage === GAME_STAGES.planning;
-  const isGamePlanningComplete =
-    battlefield.stage === GAME_STAGES.planningComplete;
   const isGameStarted = battlefield.stage === GAME_STAGES.ongoing;
 
   const currentHighlightedCells = useMemo(() => [], []);
@@ -49,7 +47,7 @@ export default function Battlefield({
       }
       if (e.target.tagName !== 'TD') {
         return;
-      }
+      } 
 
       const affectedCells =
         getAffectedCells(e.target, battlefieldTable, battlefield) || [];
@@ -117,15 +115,14 @@ export default function Battlefield({
       COLOR_SCHEMA.placed.split(' ').forEach((className) => {
         el.classList.remove(className);
       });
-      // TODO: old way to remove multiple classes
-      // el.classList.remove(COLOR_SCHEMA.placed)
     });
+    onChange({ ...gameSetup, [`player${position}`]: initialBattlefieldSetup });
   };
 
-  const onGameStart = () => {
+  const onReady = () => {
     setBattlefield({
       ...battlefield,
-      stage: GAME_STAGES.ongoing,
+      stage: GAME_STAGES.ready,
     });
 
     onChange({ ...gameSetup, [`player${position}`]: battlefield });
@@ -185,8 +182,6 @@ export default function Battlefield({
           COLOR_SCHEMA.placed.split(' ').forEach((className) => {
             cell.classList.add(className);
           });
-          // TODO: ald way to add multiple classes
-          // ship.ref.classList.add(COLOR_SCHEMA.placed);
         }
       });
     });
@@ -273,9 +268,7 @@ export default function Battlefield({
             onReset: resetFleet,
             autoGenerate,
             onPositionChange,
-            onReady: () => {
-              onGameStart();
-            },
+            onReady
           }}
         />
       )}
