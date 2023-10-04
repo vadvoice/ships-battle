@@ -3,7 +3,12 @@
 import Battlefield from '@/components/Battlefield';
 import BattlefieldPlanning from '@/components/BattlefieldPlanning';
 import GameSettings from '@/components/GameSettings';
-import { GAME_STAGES, GAME_MODE, INITIAL_BATTLEFIELD_SETUP, BATTLEFIELD_SIDES } from '@/libs/config';
+import {
+  GAME_STAGES,
+  GAME_MODE,
+  INITIAL_BATTLEFIELD_SETUP,
+  BATTLEFIELD_SIDES,
+} from '@/libs/config';
 import { getRandomBetween } from '@/libs/helpers';
 import { useEffect, useState } from 'react';
 
@@ -14,6 +19,7 @@ export default function Game() {
     enemy: INITIAL_BATTLEFIELD_SETUP,
     mode: GAME_MODE.singlePlayer,
     whoseTurn: null,
+    shotsAmount: 0,
   };
   const [gameSetup, setGameSetup] = useState(initialGameSetupState);
 
@@ -33,10 +39,12 @@ export default function Game() {
   };
 
   const onReset = () => {
-    setGameSetup({
-      ...initialGameSetupState,
-      stage: GAME_STAGES.menu,
-    });
+    if (window.confirm('Are you sure? Game progress will be lost!')) {
+      setGameSetup({
+        ...initialGameSetupState,
+        stage: GAME_STAGES.menu,
+      });
+    }
   };
 
   const onShot = ({ shot }) => {
@@ -45,15 +53,19 @@ export default function Game() {
     // do record for the active player
     setGameSetup({
       ...gameSetup,
+      shotsAmount: gameSetup.shotsAmount + 1,
       [whoseTurn]: {
         ...gameSetup[whoseTurn],
-        combatLog: [...gameSetup[whoseTurn].combatLog, shot]
+        combatLog: [...gameSetup[whoseTurn].combatLog, shot],
       },
-      whoseTurn: whoseTurn === BATTLEFIELD_SIDES.player ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player,
+      whoseTurn:
+        whoseTurn === BATTLEFIELD_SIDES.player
+          ? BATTLEFIELD_SIDES.enemy
+          : BATTLEFIELD_SIDES.player,
     });
 
     // TODO: check for gameover
-  }
+  };
 
   useEffect(() => {
     if (
@@ -67,11 +79,10 @@ export default function Game() {
       setGameSetup({
         ...gameSetup,
         stage: GAME_STAGES.ongoing,
-        whoseTurn: side
+        whoseTurn: side,
       });
     }
   }, [gameSetup, gameSetup.player.stage, gameSetup.enemy.stage]);
-
 
   return (
     <div className="flex flex-1 flex-col items-center p-24 h-screen">

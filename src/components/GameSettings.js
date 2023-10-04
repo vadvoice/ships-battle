@@ -69,14 +69,14 @@ export default function GameSettings({
         <div className="flex">
           <button
             onClick={() => onGameModeChange(GAME_MODE.singlePlayer)}
-            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded mr-5"
+            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
           >
             1 Player
           </button>
 
           <button
-            onClick={() => onGameModeChange(GAME_MODE.multiplayer)}
-            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+            className="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50"
+            title="Coming soon"
           >
             2 Player
           </button>
@@ -91,7 +91,11 @@ export default function GameSettings({
         <h4 className="text-2xl font-bold dark:text-white text-center">
           {GAME_STAGE_MAP[gameSetup.stage]}
         </h4>
-        <div className="flex">
+        <div className="flex items-center text-blue-700 border-y-2 border-indigo-500 justify-center">
+          <p className="text-sm text-center mr-2">Shots made:</p>
+          <span className="text-md font-bold">{gameSetup.shotsAmount}</span>
+        </div>
+        <div className="flex mt-3">
           <div className={`relative flex items-center mx-3`}>
             <PlayerAvatar player={gameSetup.player} />
             <h5 className="font-bold dark:text-white text-center">Player 1</h5>
@@ -123,7 +127,7 @@ export default function GameSettings({
             onClick={onReset}
             className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
           >
-            Reset
+            Quit
           </button>
         </div>
       </div>
@@ -151,7 +155,7 @@ export default function GameSettings({
           onClick={onReset}
           className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
         >
-          Reset
+          Quit
         </button>
       </div>
     </div>
