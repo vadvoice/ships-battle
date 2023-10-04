@@ -23,7 +23,7 @@ export default function Battlefield({
     : BATTLEFIELD_SIDES.enemy;
   const isFireAllowed = gameState.whoseTurn === playerSide;
   const [battlefield,] = useState(initialBattlefieldSetup);
-  const enemySide = isMain ? 'enemy' : 'player';
+  const enemySide = isMain ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player;
   let activeCell = null;
 
   const onMouseMove = (e) => {

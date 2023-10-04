@@ -17,7 +17,7 @@ export const GAME_STAGE_MAP = {
 };
 
 export const SHIP_DETAILS = [
-  { name: 'carrier', length: 5, amount: 1, used: false, color: 'bg-red-500' },
+  { name: 'carrier', length: 5, amount: 1, used: false, color: 'bg-red-400' },
   { name: 'battleship', length: 4, amount: 1, used: false, color: 'bg-blue-500' },
   { name: 'cruiser', length: 3, amount: 1, used: false, color: 'bg-green-500' },
   { name: 'destroyer', length: 3, amount: 1, used: false, color: 'bg-yellow-500' },

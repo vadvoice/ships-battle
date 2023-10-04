@@ -49,7 +49,7 @@ export default function Game() {
         ...gameSetup[whoseTurn],
         combatLog: [...gameSetup[whoseTurn].combatLog, shot]
       },
-      whoseTurn: whoseTurn === 'player' ? 'enemy' : 'player',
+      whoseTurn: whoseTurn === BATTLEFIELD_SIDES.player ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player,
     });
 
     // TODO: check for gameover

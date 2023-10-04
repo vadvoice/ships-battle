@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
+  BATTLEFIELD_SIDES,
   COLOR_SCHEMA,
   GAME_STAGES,
   INITIAL_BATTLEFIELD_SETUP,
@@ -118,7 +119,7 @@ export default function BattlefieldPlanning({
     });
     onChange({
       ...gameState,
-      [isPc ? 'enemy' : 'player']: INITIAL_BATTLEFIELD_SETUP,
+      [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: INITIAL_BATTLEFIELD_SETUP,
     });
   };
 
@@ -128,7 +129,7 @@ export default function BattlefieldPlanning({
       stage: GAME_STAGES.ready,
     });
 
-    onChange({ ...gameState, [isPc ? 'enemy' : 'player']: battlefield });
+    onChange({ ...gameState, [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield });
   };
 
   const genericFleet = () => {
@@ -165,8 +166,7 @@ export default function BattlefieldPlanning({
   }, []);
 
   useEffect(() => {
-    // onChange({ ...gameState, [`player${position}`]: battlefield });
-    onChange({ ...gameState, [isPc ? 'enemy' : 'player']: battlefield });
+    onChange({ ...gameState, [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [battlefield.stage]);
 
