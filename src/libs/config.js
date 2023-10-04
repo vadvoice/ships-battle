@@ -45,3 +45,18 @@ export const CELL_HEIGHT = 'h-10';
 
 export const ROWS_AMOUNT = 8;
 export const COLUMNS_AMOUNT = 7;
+
+export const INITIAL_BATTLEFIELD_SETUP = {
+  shipDetails: SHIP_DETAILS,
+  currentShipIndex: 0,
+  currentShip: SHIP_DETAILS[0],
+  horizontalPlacement: true,
+  fleet: [],
+  stage: GAME_STAGES.planning,
+  combatLog: [],
+};
+
+export const BATTLEFIELD_SIDES = {
+  player: 'player',
+  enemy: 'enemy',
+};

@@ -1,4 +1,10 @@
-import { CELL_HEIGHT, CELL_WIDTH, COLUMNS_AMOUNT, ROWS_AMOUNT, ROW_NAMES } from './config';
+import {
+  CELL_HEIGHT,
+  CELL_WIDTH,
+  COLUMNS_AMOUNT,
+  ROWS_AMOUNT,
+  ROW_NAMES,
+} from './config';
 
 /**
  * @param {Number} min
@@ -22,7 +28,7 @@ export const getVirtualCoords = (x, y) => {
     x,
     y,
     concatenated: `x:${x};y:${y}`,
-    raw: x + y,
+    raw: `${x}${y}`,
   };
 };
 
@@ -47,7 +53,8 @@ export const getVirtualAffectedCells = ({
           concatenated: `x:${nextColumnIndex};y:${rowIndex}`,
           shipColor,
         };
-      }).filter(Boolean);
+      })
+      .filter(Boolean);
   } else {
     affectedCells = Array(ship.length)
       .fill()
@@ -61,7 +68,8 @@ export const getVirtualAffectedCells = ({
           concatenated: `x:${colunnIndex};y:${nextRowIndex}`,
           shipColor,
         };
-      }).filter(Boolean);
+      })
+      .filter(Boolean);
   }
 
   return affectedCells;
@@ -115,59 +123,72 @@ export const getGenericFleet = (battlefield) => {
   return fleet;
 };
 
+export const getRandomShotCoords = () => {
+  const randomColumnIndex = getRandomBetween(1, COLUMNS_AMOUNT);
+  const randomRowIndex = getRandomBetween(1, ROWS_AMOUNT);
+
+  return {
+    x: randomColumnIndex,
+    y: randomRowIndex,
+    raw: `${randomColumnIndex}${randomRowIndex}`,
+    concatenated: `x:${randomColumnIndex};y:${randomRowIndex}`,
+  };
+};
+
 export const buildTableContent = () => {
-  
-  return <>
-    <thead>
-      <tr>
-        {Array(ROWS_AMOUNT)
+  return (
+    <>
+      <thead>
+        <tr>
+          {Array(ROWS_AMOUNT)
+            .fill()
+            .map((_, headIndex) => {
+              return (
+                <th
+                  // className={`${CELL_WIDTH} ${CELL_HEIGHT} uppercase`}
+                  className={`w-10 h-10 uppercase`}
+                  key={`table-head-${headIndex}`}
+                >
+                  {headIndex || ''}
+                </th>
+              );
+            })}
+        </tr>
+      </thead>
+      <tbody>
+        {Array(COLUMNS_AMOUNT)
           .fill()
-          .map((_, headIndex) => {
+          .map((el, index) => {
             return (
-              <th
-                // className={`${CELL_WIDTH} ${CELL_HEIGHT} uppercase`}
-                className={`w-10 h-10 uppercase`}
-                key={`table-head-${headIndex}`}
-              >
-                {headIndex || ''}
-              </th>
+              <tr key={`row-${index}`}>
+                {Array(8)
+                  .fill()
+                  .map((el, innerIndex) => {
+                    if (!innerIndex) {
+                      return (
+                        <th
+                          key={`table-data-${innerIndex}`}
+                          className={`${CELL_WIDTH} ${CELL_HEIGHT} uppercase`}
+                        >
+                          {ROW_NAMES[index]}
+                        </th>
+                      );
+                    }
+                    return (
+                      <td
+                        key={`table-data-${innerIndex}`}
+                        className={`${CELL_WIDTH} ${CELL_HEIGHT} text-center border-solid border-2 border-indigo-600 rounded relative hover:bg-sky-700 cursor-pointer`}
+                        data-index={innerIndex}
+                        data-row={index + 1}
+                      >
+                        {/* {innerIndex} */}
+                      </td>
+                    );
+                  })}
+              </tr>
             );
           })}
-      </tr>
-    </thead>
-    <tbody>
-      {Array(COLUMNS_AMOUNT)
-        .fill()
-        .map((el, index) => {
-          return (
-            <tr key={`row-${index}`}>
-              {Array(8)
-                .fill()
-                .map((el, innerIndex) => {
-                  if (!innerIndex) {
-                    return (
-                      <th
-                        key={`table-data-${innerIndex}`}
-                        className={`${CELL_WIDTH} ${CELL_HEIGHT} uppercase`}
-                      >
-                        {ROW_NAMES[index]}
-                      </th>
-                    );
-                  }
-                  return (
-                    <td
-                      key={`table-data-${innerIndex}`}
-                      className={`${CELL_WIDTH} ${CELL_HEIGHT} text-center border-solid border-2 border-indigo-600 rounded relative hover:bg-sky-700 cursor-pointer`}
-                      data-index={innerIndex}
-                      data-row={index + 1}
-                    >
-                      {/* {innerIndex} */}
-                    </td>
-                  );
-                })}
-            </tr>
-          );
-        })}
-    </tbody>
-  </>
-}
+      </tbody>
+    </>
+  );
+};

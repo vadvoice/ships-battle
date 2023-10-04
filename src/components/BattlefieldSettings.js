@@ -4,11 +4,11 @@ import { GAME_STAGES } from '@/libs/config';
 
 export default function BattlefieldSettings({
   actions: { onReset, onPositionChange, onReady, autoGenerate },
-  gameSetup,
+  gameState,
 }) {
-  const { horizontalPlacement } = gameSetup;
+  const { horizontalPlacement } = gameState;
 
-  const isPlanningStage = gameSetup.stage === GAME_STAGES.planning;
+  const isPlanningStage = gameState.stage === GAME_STAGES.planning;
 
   if (isPlanningStage) {
     return (

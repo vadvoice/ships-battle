@@ -1,12 +1,19 @@
 'use client';
 
-import { GAME_MODE, GAME_STAGES, GAME_STAGE_MAP } from '@/libs/config';
+import {
+  BATTLEFIELD_SIDES,
+  GAME_MODE,
+  GAME_STAGES,
+  GAME_STAGE_MAP,
+} from '@/libs/config';
 
 export default function GameSettings({
   actions: { onReset, onGameModeChange, onGameStart },
   gameSetup,
 }) {
   const isMenuState = gameSetup.stage === GAME_STAGES.menu;
+  const isGameOngoing = gameSetup.stage === GAME_STAGES.ongoing;
+  const whoseTurn = gameSetup.whoseTurn;
 
   const PlayerAvatar = ({ player }) => {
     return (
@@ -32,7 +39,7 @@ export default function GameSettings({
 
     if (stage === GAME_STAGES.planningComplete) {
       return (
-        <span className="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+        <span className="ml-2 bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
           {stageLabel}
         </span>
       );
@@ -40,7 +47,7 @@ export default function GameSettings({
 
     if (stage === GAME_STAGES.ready) {
       return (
-        <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+        <span className="ml-2 bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
           {stageLabel}
         </span>
       );
@@ -72,6 +79,51 @@ export default function GameSettings({
             className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
           >
             2 Player
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isGameOngoing) {
+    return (
+      <div className="flex justify-center p-2 flex-col">
+        <h4 className="text-2xl font-bold dark:text-white text-center">
+          {GAME_STAGE_MAP[gameSetup.stage]}
+        </h4>
+        <div className="flex">
+          <div className={`relative flex items-center mx-3`}>
+            <PlayerAvatar player={gameSetup.player} />
+            <h5 className="font-bold dark:text-white text-center">Player 1</h5>
+            <span class="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
+              <span
+                class={`${
+                  whoseTurn === BATTLEFIELD_SIDES.player ? 'animate-ping' : null
+                } absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
+              ></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+            </span>
+          </div>
+          <div className={`relative flex items-center mx-3`}>
+            <PlayerAvatar player={gameSetup.enemy} />
+            <h5 className="font-bold dark:text-white text-center">Player 2</h5>
+
+            <span class="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
+              <span
+                class={`${
+                  whoseTurn === BATTLEFIELD_SIDES.enemy ? 'animate-ping' : null
+                } absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
+              ></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+            </span>
+          </div>
+        </div>
+        <div className="actions flex self-center mt-2">
+          <button
+            onClick={onReset}
+            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+          >
+            Reset
           </button>
         </div>
       </div>
