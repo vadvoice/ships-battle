@@ -1,127 +1,183 @@
 'use client';
 
-import { GAME_MODE, GAME_STAGES } from '@/libs/config';
+import {
+  BATTLEFIELD_SIDES,
+  GAME_MODE,
+  GAME_STAGES,
+  GAME_STAGE_MAP,
+} from '@/libs/config';
 
 export default function GameSettings({
-  actions: { onChange, onReset, onGameModeChange, onGameStart },
+  actions: { onReset, onGameModeChange, onGameStart },
   gameSetup,
 }) {
-  const { horizontalPlacement } = gameSetup;
-
-  const onPositionChange = () => {
-    onChange({
-      ...gameSetup,
-      horizontalPlacement: !horizontalPlacement,
-    });
-  };
-  const isPlanningStage = gameSetup.stage === GAME_STAGES.planning;
   const isMenuState = gameSetup.stage === GAME_STAGES.menu;
+  const isGameOngoing = gameSetup.stage === GAME_STAGES.ongoing;
+  const isGameOver = gameSetup.stage === GAME_STAGES.gameover;
+  const whoseTurn = gameSetup.whoseTurn;
+
+  // TODO: player personalization
+  const PlayerAvatar = ({ player }) => {
+    return (
+      <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+        <svg
+          className="absolute w-12 h-12 text-gray-400 -left-1"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+            clipRule="evenodd"
+          ></path>
+        </svg>
+      </div>
+    );
+  };
+
+  const StatusBadge = ({ stage }) => {
+    const stageLabel = GAME_STAGE_MAP[stage] || GAME_STAGE_MAP[1];
+
+    if (stage === GAME_STAGES.planningComplete) {
+      return (
+        <span className="ml-2 bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+          {stageLabel}
+        </span>
+      );
+    }
+
+    if (stage === GAME_STAGES.ready) {
+      return (
+        <span className="ml-2 bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+          {stageLabel}
+        </span>
+      );
+    }
+
+    return (
+      <span className="ml-2 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+        {stageLabel}
+      </span>
+    );
+  };
 
   if (isMenuState) {
     return (
-      <div className="flex justify-between p-2 mt-5">
-        <button
-          onClick={() => onGameModeChange(GAME_MODE.singlePlayer)}
-          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded mr-5"
-        >
-          1 Player
-        </button>
+      <div className="flex justify-between p-2 mt-5 flex-col">
+        <h4 className="text-2xl font-bold dark:text-white text-center mb-2">
+          {GAME_STAGE_MAP[gameSetup.stage]}
+        </h4>
+        <div className="flex">
+          <button
+            onClick={() => onGameModeChange(GAME_MODE.singlePlayer)}
+            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+          >
+            1 Player
+          </button>
 
-        <button
-          onClick={() => onGameModeChange(GAME_MODE.multiplayer)}
-          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-        >
-          2 Player
-        </button>
+          <button
+            className="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50"
+            title="Coming soon"
+          >
+            2 Player
+          </button>
+        </div>
       </div>
     );
   }
 
-  if (isPlanningStage) {
+  if (isGameOngoing) {
     return (
-      <div className="flex justify-center p-2 flex-col mt-5">
-        <h4 className="text-2xl font-bold dark:text-white">Settings:</h4>
-
-        {/* // ship position  */}
-        <div className="my-2 flex">
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              value=""
-              className="sr-only peer"
-              onClick={onPositionChange}
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              POSITION: {horizontalPlacement ? 'Horizontal' : 'Vertical'}
+      <div className="flex justify-center p-2 flex-col">
+        <h4 className="text-2xl font-bold dark:text-white text-center">
+          {GAME_STAGE_MAP[gameSetup.stage]}
+        </h4>
+        <div className="flex items-center text-blue-700 border-y-2 border-indigo-500 justify-center">
+          <p className="text-sm text-center mr-2">Shots made:</p>
+          <span className="text-md font-bold">{gameSetup.shotsAmount}</span>
+        </div>
+        <div className="flex mt-3">
+          <div className={`relative flex items-center mx-3`}>
+            <PlayerAvatar player={gameSetup.player} />
+            <h5 className="font-bold dark:text-white text-center">Player 1</h5>
+            <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
+              <span
+                className={`${
+                  whoseTurn === BATTLEFIELD_SIDES.player ? 'animate-ping' : null
+                } absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
+              ></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
             </span>
-          </label>
-          <div className="ml-2">
-            {horizontalPlacement ? (
-              <svg
-                className="w-6 h-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 8 14"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m1 13 5.7-5.326a.909.909 0 0 0 0-1.348L1 1"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="w-6 h-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 8"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"
-                />
-              </svg>
-            )}
+          </div>
+          <div className={`relative flex items-center mx-3`}>
+            <PlayerAvatar player={gameSetup.enemy} />
+            <h5 className="font-bold dark:text-white text-center">Player 2</h5>
+
+            <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
+              <span
+                className={`${
+                  whoseTurn === BATTLEFIELD_SIDES.enemy ? 'animate-ping' : null
+                } absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
+              ></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+            </span>
           </div>
         </div>
-
-        <label>
+        <div className="actions flex self-center mt-2">
           <button
             onClick={onReset}
             className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
           >
-            Reset
+            Quit
           </button>
-        </label>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="flex justify-between p-2 mt-5">
-      <label>
-        <button
-          onClick={onGameStart}
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-        >
-          I&apos;m ready!
-        </button>
-      </label>
+  if (isGameOver) {
+    return <div className="flex justify-center p-2 flex-col items-center">
+      <PlayerAvatar player={gameSetup.player} />
+      <h2 className="text-2xl font-bold dark:text-white text-center">{gameSetup.winner} won!</h2>
 
-      <button
-        onClick={onReset}
-        className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-      >
-        Reset
-      </button>
+      <div className="actions flex self-center mt-2">
+        <button
+          onClick={onReset}
+          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+        >
+          Quit
+        </button>
+      </div>
+
+      <div class="js-container container" style="top:0px !important;"></div>
+    </div>
+  }
+
+  return (
+    <div className="flex justify-center p-2 flex-col">
+      <h4 className="text-2xl font-bold dark:text-white text-center">
+        {GAME_STAGE_MAP[gameSetup.stage]}
+      </h4>
+      <div className="flex">
+        <div className="flex items-center">
+          <PlayerAvatar player={gameSetup.player} />
+          <StatusBadge stage={gameSetup.player.stage} />
+        </div>
+
+        <div className="flex items-center">
+          <PlayerAvatar player={gameSetup.enemy} />
+          <StatusBadge stage={gameSetup.enemy.stage} />
+        </div>
+      </div>
+      <div className="actions flex self-center mt-2">
+        <button
+          onClick={onReset}
+          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+        >
+          Quit
+        </button>
+      </div>
     </div>
   );
 }

@@ -23,7 +23,6 @@ export async function GET() {
     const result = await Topic.find();
     return NextResponse.json({ data: result }, { status: 201 });
   } catch (error) {
-    console.log('failed');
     return NextResponse.json({ message: error }, { status: 400 });
   }
 }

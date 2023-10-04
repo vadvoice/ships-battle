@@ -7,9 +7,9 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Link href="/game">
-        <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
           Here we{' '}
-          <span class="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
+          <span className="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
             goooooo
           </span>
         </h1>

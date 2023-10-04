@@ -4,17 +4,46 @@ import { GAME_STAGES } from '@/libs/config';
 
 export default function BattlefieldSettings({
   actions: { onReset, onPositionChange, onReady, autoGenerate },
-  gameSetup,
+  gameState,
 }) {
-  const { horizontalPlacement } = gameSetup;
+  const { horizontalPlacement } = gameState;
 
-  const isPlanningStage = gameSetup.stage === GAME_STAGES.planning;
+  const isPlanningStage = gameState.stage === GAME_STAGES.planning;
 
   if (isPlanningStage) {
     return (
       <div className="flex justify-center p-2 flex-col mt-5">
-        <h4 className="text-2xl font-bold dark:text-white">Settings:</h4>
+        <h4 className="text-xl font-bold dark:text-white">Settings:</h4>
 
+        <div className="flex justify-between">
+          <button
+            onClick={autoGenerate}
+            className="flex items-center bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+          >
+            Generic
+            <svg
+              className="h-8 w-8"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="currentColor"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" />
+              <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
+              <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
+            </svg>
+          </button>
+          <button
+            onClick={onReset}
+            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+          >
+            Reset
+          </button>
+        </div>
         {/* // ship position  */}
         <div className="my-2 flex">
           <label className="relative inline-flex items-center cursor-pointer">
@@ -65,42 +94,63 @@ export default function BattlefieldSettings({
             )}
           </div>
         </div>
-
-        <div className='flex justify-between'>
-          <button
-            onClick={autoGenerate}
-            className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-          >
-            Autogenerate
-          </button>
-          <button
-            onClick={onReset}
-            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-          >
-            Reset
-          </button>
-        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-between p-2 mt-5">
-      <label>
+    <div className="flex justify-between p-2 mt-5 flex-col">
+      <h4 className="text-xl font-bold dark:text-white">Settings:</h4>
+
+      <div className="flex justify-between">
+        <button
+          onClick={autoGenerate}
+          className="flex items-center bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        >
+          Generic
+          <svg
+            className="h-8 w-8"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+            stroke="currentColor"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" />
+            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
+            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
+          </svg>
+        </button>
         <button
           onClick={onReady}
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+          className="flex items-center bg-green-400 hover:bg-green-300 text-white font-bold py-2 px-4 border-b-4 border-green-500 hover:border-green-600 rounded"
         >
           I&apos;m ready!
+          <svg
+            className="h-8 w-8"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {' '}
+            <polygon points="5 4 15 12 5 20 5 4" />{' '}
+            <line x1="19" y1="5" x2="19" y2="19" />
+          </svg>
         </button>
-      </label>
 
-      <button
-        onClick={onReset}
-        className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-      >
-        Reset
-      </button>
+        <button
+          onClick={onReset}
+          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+        >
+          Reset
+        </button>
+      </div>
     </div>
   );
 }
