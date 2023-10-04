@@ -95,26 +95,26 @@ export default function GameSettings({
           <div className={`relative flex items-center mx-3`}>
             <PlayerAvatar player={gameSetup.player} />
             <h5 className="font-bold dark:text-white text-center">Player 1</h5>
-            <span class="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
+            <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
               <span
-                class={`${
+                className={`${
                   whoseTurn === BATTLEFIELD_SIDES.player ? 'animate-ping' : null
                 } absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
               ></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
             </span>
           </div>
           <div className={`relative flex items-center mx-3`}>
             <PlayerAvatar player={gameSetup.enemy} />
             <h5 className="font-bold dark:text-white text-center">Player 2</h5>
 
-            <span class="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
+            <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
               <span
-                class={`${
+                className={`${
                   whoseTurn === BATTLEFIELD_SIDES.enemy ? 'animate-ping' : null
                 } absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
               ></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
             </span>
           </div>
         </div>
