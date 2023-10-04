@@ -43,7 +43,7 @@ export const ROW_NAMES = 'abcdefghijklmnopqrstuvwxyz'.split('');
 export const CELL_WIDTH = 'w-10';
 export const CELL_HEIGHT = 'h-10';
 
-export const ROWS_AMOUNT = 8;
+export const ROWS_AMOUNT = 7;
 export const COLUMNS_AMOUNT = 7;
 
 export const INITIAL_BATTLEFIELD_SETUP = {
