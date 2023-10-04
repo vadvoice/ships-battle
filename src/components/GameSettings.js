@@ -13,8 +13,10 @@ export default function GameSettings({
 }) {
   const isMenuState = gameSetup.stage === GAME_STAGES.menu;
   const isGameOngoing = gameSetup.stage === GAME_STAGES.ongoing;
+  const isGameOver = gameSetup.stage === GAME_STAGES.gameover;
   const whoseTurn = gameSetup.whoseTurn;
 
+  // TODO: player personalization
   const PlayerAvatar = ({ player }) => {
     return (
       <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
@@ -132,6 +134,24 @@ export default function GameSettings({
         </div>
       </div>
     );
+  }
+
+  if (isGameOver) {
+    return <div className="flex justify-center p-2 flex-col items-center">
+      <PlayerAvatar player={gameSetup.player} />
+      <h2 className="text-2xl font-bold dark:text-white text-center">{gameSetup.winner} won!</h2>
+
+      <div className="actions flex self-center mt-2">
+        <button
+          onClick={onReset}
+          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+        >
+          Quit
+        </button>
+      </div>
+
+      <div class="js-container container" style="top:0px !important;"></div>
+    </div>
   }
 
   return (

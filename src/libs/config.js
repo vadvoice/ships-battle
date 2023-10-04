@@ -17,11 +17,46 @@ export const GAME_STAGE_MAP = {
 };
 
 export const SHIP_DETAILS = [
-  { name: 'carrier', length: 5, amount: 1, used: false, color: 'bg-red-400' },
-  { name: 'battleship', length: 4, amount: 1, used: false, color: 'bg-blue-500' },
-  { name: 'cruiser', length: 3, amount: 1, used: false, color: 'bg-green-500' },
-  { name: 'destroyer', length: 3, amount: 1, used: false, color: 'bg-yellow-500' },
-  { name: 'frigate', length: 2, amount: 1, used: false, color: 'bg-purple-500' },
+  {
+    name: 'carrier',
+    length: 5,
+    amount: 1,
+    isDameged: false,
+    color: 'bg-red-400',
+    isSunk: false,
+  },
+  {
+    name: 'battleship',
+    length: 4,
+    amount: 1,
+    isDameged: false,
+    color: 'bg-blue-500',
+    isSunk: false,
+  },
+  {
+    name: 'cruiser',
+    length: 3,
+    amount: 1,
+    isDameged: false,
+    color: 'bg-green-500',
+    isSunk: false,
+  },
+  {
+    name: 'destroyer',
+    length: 3,
+    amount: 1,
+    isDameged: false,
+    color: 'bg-yellow-500',
+    isSunk: false,
+  },
+  {
+    name: 'frigate',
+    length: 2,
+    amount: 1,
+    isDameged: false,
+    color: 'bg-purple-500',
+    isSunk: false,
+  },
 ];
 
 export const COLOR_SCHEMA = {
@@ -36,7 +71,7 @@ export const COLOR_SCHEMA = {
 export const GAME_MODE = {
   singlePlayer: 1,
   multiplayer: 2,
-}
+};
 
 export const ROW_NAMES = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
@@ -45,6 +80,8 @@ export const CELL_HEIGHT = 'h-10';
 
 export const ROWS_AMOUNT = 7;
 export const COLUMNS_AMOUNT = 7;
+
+export const MAX_AMOUNT_OF_SHOTS = ROWS_AMOUNT * COLUMNS_AMOUNT;
 
 export const INITIAL_BATTLEFIELD_SETUP = {
   shipDetails: SHIP_DETAILS,

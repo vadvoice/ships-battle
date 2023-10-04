@@ -23,12 +23,15 @@ export function getRandomBetween(min, max) {
  * @param {Number} y coordinate
  * @returns {Object} virtual coordinates
  */
-export const getVirtualCoords = (x, y) => {
+export const getVirtualCoords = (x, y, shipColor = '') => {
   return {
     x,
     y,
     concatenated: `x:${x};y:${y}`,
+    // x and y are swapped for the raw value
     raw: `${x}${y}`,
+    isDameged: false,
+    shipColor,
   };
 };
 
@@ -46,13 +49,7 @@ export const getVirtualAffectedCells = ({
       .map((_, index) => {
         const nextColumnIndex = colunnIndex + index;
         if (nextColumnIndex > COLUMNS_AMOUNT) return;
-        return {
-          x: nextColumnIndex,
-          y: rowIndex,
-          raw: `${nextColumnIndex}${rowIndex}`,
-          concatenated: `x:${nextColumnIndex};y:${rowIndex}`,
-          shipColor,
-        };
+        return getVirtualCoords(nextColumnIndex, rowIndex, shipColor);
       })
       .filter(Boolean);
   } else {
@@ -61,13 +58,7 @@ export const getVirtualAffectedCells = ({
       .map((_, index) => {
         const nextRowIndex = rowIndex + index;
         if (nextRowIndex > ROWS_AMOUNT) return;
-        return {
-          x: colunnIndex,
-          y: nextRowIndex,
-          raw: `${colunnIndex}${nextRowIndex}`,
-          concatenated: `x:${colunnIndex};y:${nextRowIndex}`,
-          shipColor,
-        };
+        return getVirtualCoords(colunnIndex, nextRowIndex, shipColor);
       })
       .filter(Boolean);
   }
@@ -115,7 +106,7 @@ export const getGenericFleet = (battlefield) => {
 
     counter++;
     fleet.push({
-      name: currentShip.name,
+      ...currentShip,
       position: affectedCells,
     });
   }
@@ -127,12 +118,7 @@ export const getRandomShotCoords = () => {
   const randomColumnIndex = getRandomBetween(1, COLUMNS_AMOUNT);
   const randomRowIndex = getRandomBetween(1, ROWS_AMOUNT);
 
-  return {
-    x: randomColumnIndex,
-    y: randomRowIndex,
-    raw: `${randomColumnIndex}${randomRowIndex}`,
-    concatenated: `x:${randomColumnIndex};y:${randomRowIndex}`,
-  };
+  return getVirtualCoords(randomColumnIndex, randomRowIndex);
 };
 
 export const buildTableContent = () => {

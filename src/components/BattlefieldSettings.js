@@ -130,7 +130,7 @@ export default function BattlefieldSettings({
         >
           I&apos;m ready!
           <svg
-            class="h-8 w-8"
+            className="h-8 w-8"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

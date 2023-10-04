@@ -19,9 +19,11 @@ export default function Game() {
     enemy: INITIAL_BATTLEFIELD_SETUP,
     mode: GAME_MODE.singlePlayer,
     whoseTurn: null,
+    winner: null,
     shotsAmount: 0,
   };
   const [gameSetup, setGameSetup] = useState(initialGameSetupState);
+  const isGameOver = gameSetup.stage === GAME_STAGES.gameover;
 
   const onGameModeChange = (mode) => {
     setGameSetup({
@@ -39,16 +41,46 @@ export default function Game() {
   };
 
   const onReset = () => {
-    if (window.confirm('Are you sure? Game progress will be lost!')) {
-      setGameSetup({
-        ...initialGameSetupState,
-        stage: GAME_STAGES.menu,
-      });
+    if (!isGameOver && !window.confirm('Are you sure? Game progress will be lost!')) {
+      return;
     }
+
+    setGameSetup({
+      ...initialGameSetupState,
+      stage: GAME_STAGES.menu,
+    });
   };
 
   const onShot = ({ shot }) => {
     const whoseTurn = gameSetup.whoseTurn;
+
+    const oppenentSide =
+      whoseTurn === BATTLEFIELD_SIDES.player
+        ? BATTLEFIELD_SIDES.enemy
+        : BATTLEFIELD_SIDES.player;
+
+    let oppenentFleet = [...gameSetup[oppenentSide].fleet];
+    // find mark cell as damaged
+    oppenentFleet.forEach((ship) => {
+      ship.position.forEach((cell) => {
+        if (cell.raw === shot.raw) {
+          cell.isDameged = true;
+        }
+      });
+    });
+    // mark ship sunk if all cells are damaged
+    oppenentFleet.forEach((ship) => {
+      const isSunk = ship.position.every((cell) => {
+        return cell.isDameged;
+      });
+      const isShipDamaged = ship.position.some((cell) => {
+        return cell.isDameged;
+      });
+      ship.isDameged = isShipDamaged;
+      ship.isSunk = isSunk;
+    });
+
+    const isGameOver = oppenentFleet.every((ship) => ship.isSunk === true);
 
     // do record for the active player
     setGameSetup({
@@ -58,15 +90,17 @@ export default function Game() {
         ...gameSetup[whoseTurn],
         combatLog: [...gameSetup[whoseTurn].combatLog, shot],
       },
-      whoseTurn:
-        whoseTurn === BATTLEFIELD_SIDES.player
-          ? BATTLEFIELD_SIDES.enemy
-          : BATTLEFIELD_SIDES.player,
+      [oppenentSide]: {
+        ...gameSetup[oppenentSide],
+        fleet: oppenentFleet,
+      },
+      whoseTurn: oppenentSide,
+      stage: isGameOver ? GAME_STAGES.gameover : GAME_STAGES.ongoing,
+      winner: whoseTurn,
     });
-
-    // TODO: check for gameover
   };
 
+  // wait for both players to be ready to start the game
   useEffect(() => {
     if (
       gameSetup.stage !== GAME_STAGES.ongoing &&
@@ -80,6 +114,14 @@ export default function Game() {
         ...gameSetup,
         stage: GAME_STAGES.ongoing,
         whoseTurn: side,
+        player: {
+          ...gameSetup.player,
+          stage: GAME_STAGES.ongoing,
+        },
+        enemy: {
+          ...gameSetup.enemy,
+          stage: GAME_STAGES.ongoing,
+        },
       });
     }
   }, [gameSetup, gameSetup.player.stage, gameSetup.enemy.stage]);
@@ -94,7 +136,7 @@ export default function Game() {
       </h1>
 
       {[GAME_STAGES.planning].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around">
+        <div className="w-full flex justify-around flex-1">
           <BattlefieldPlanning
             isMain
             actions={{ onChange: setGameSetup }}
@@ -110,7 +152,7 @@ export default function Game() {
       ) : null}
 
       {[GAME_STAGES.ongoing].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around">
+        <div className="w-full flex justify-around flex-1">
           <Battlefield
             isMain
             enemyFleet={gameSetup.enemy.fleet}
@@ -124,6 +166,14 @@ export default function Game() {
             gameState={gameSetup}
             actions={{ onChange: setGameSetup, onShot }}
           />
+        </div>
+      ) : null}
+
+      {[GAME_STAGES.gameover].includes(gameSetup.stage) ? (
+        <div className="w-full flex justify-around flex-1">
+          <h2 className="text-2xl font-bold dark:text-white text-center">
+            {gameSetup.winner} wins!
+          </h2>
         </div>
       ) : null}
 

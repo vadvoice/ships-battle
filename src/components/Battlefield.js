@@ -1,4 +1,4 @@
-import { BATTLEFIELD_SIDES, COLOR_SCHEMA } from '@/libs/config';
+import { BATTLEFIELD_SIDES, COLOR_SCHEMA, MAX_AMOUNT_OF_SHOTS } from '@/libs/config';
 import {
   buildTableContent,
   getRandomShotCoords,
@@ -63,7 +63,7 @@ export default function Battlefield({
       }
       isShotValid = true;
 
-      onShot({ shot: randomCoords });
+      onShot({ shot: randomCoords, isPc });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFireAllowed]);
@@ -73,6 +73,11 @@ export default function Battlefield({
     if (!gameState[enemySide].combatLog.length) {
       return;
     }
+
+    if (MAX_AMOUNT_OF_SHOTS === gameState.shotsAmount) {
+      return;
+    }
+
     const shot = gameState[enemySide].combatLog[gameState[enemySide].combatLog.length - 1];
     if (shot) {
       hightlightCombatLog(shot);

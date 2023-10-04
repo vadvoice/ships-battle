@@ -69,7 +69,7 @@ export default function BattlefieldPlanning({
         fleet: [
           ...battlefield.fleet,
           {
-            name: battlefield.currentShip.name,
+            ...battlefield.currentShip,
             position: affectedCells,
           },
         ],
@@ -117,10 +117,6 @@ export default function BattlefieldPlanning({
         el.classList.remove(color);
       });
     });
-    onChange({
-      ...gameState,
-      [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: INITIAL_BATTLEFIELD_SETUP,
-    });
   };
 
   const onReady = () => {
@@ -165,11 +161,13 @@ export default function BattlefieldPlanning({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // propagate changes to the parent
   useEffect(() => {
     onChange({ ...gameState, [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [battlefield.stage]);
 
+  // highlight ship on the battlefield
   useEffect(() => {
     if (!battlefield.fleet.length) {
       return;
@@ -196,10 +194,6 @@ export default function BattlefieldPlanning({
       });
     });
   }, [battlefield.fleet, isPc]);
-
-  if (isMenuState) {
-    return <></>;
-  }
 
   return (
     <div>
