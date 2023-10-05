@@ -12,12 +12,19 @@ import {
 import { getRandomBetween } from '@/libs/helpers';
 import { useEffect, useState } from 'react';
 import ConfettiGenerator from 'confetti-js';
+import { Stats } from '@/components/Stats';
 
 export default function Game() {
   const initialGameSetupState = {
     stage: GAME_STAGES.menu,
-    player: INITIAL_BATTLEFIELD_SETUP,
-    enemy: INITIAL_BATTLEFIELD_SETUP,
+    player: {
+      name: 'player',
+      ...INITIAL_BATTLEFIELD_SETUP
+    },
+    enemy: {
+      name: 'enemy',
+      ...INITIAL_BATTLEFIELD_SETUP
+    },
     mode: GAME_MODE.singlePlayer,
     whoseTurn: null,
     winner: null,
@@ -84,8 +91,7 @@ export default function Game() {
       ship.isSunk = isSunk;
     });
 
-    // const isGameOver = oppenentFleet.every((ship) => ship.isSunk === true);
-    const isGameOver = true;
+    const isGameOver = oppenentFleet.every((ship) => ship.isSunk === true);
 
     // do record for the active player
     setGameSetup({
@@ -144,12 +150,16 @@ export default function Game() {
 
   if (isGameOver) {
     return (
-      <div className="relative w-full flex justify-around flex-1 flex-col">
-        <h2 className="absolute inset-1/2 text-2xl font-bold dark:text-white text-center">
+      <div className="relative w-full flex justify-around flex-1 flex-col h-screen">
+        {/* background confetti */}
+        <canvas className="inset-x-0 h-screen w-screen absolute" id="congrats"></canvas>
+
+        <h2 className="text-2xl font-bold dark:text-white text-center">
           {gameSetup.winner} wins!
         </h2>
 
-        <canvas className="flex flex-1" id="congrats"></canvas>
+        <Stats gameState={gameSetup} />
+
         {/* TODO: statictics */}
         <GameSettings
           gameSetup={gameSetup}

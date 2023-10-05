@@ -19,9 +19,11 @@ export default function BattlefieldPlanning({
   gameState,
   isPc = false,
 }) {
-  const [battlefield, setBattlefield] = useState(INITIAL_BATTLEFIELD_SETUP);
+  const [battlefield, setBattlefield] = useState({
+    name: isPc ? 'PC' : 'Player',
+    ...INITIAL_BATTLEFIELD_SETUP,
+  });
   const battlefieldTable = useRef();
-  const isMenuState = battlefield.stage === GAME_STAGES.menu;
   const isPlanningStage = battlefield.stage === GAME_STAGES.planning;
 
   const resetBattleFieldOngoingProcess = useCallback(() => {
@@ -109,7 +111,10 @@ export default function BattlefieldPlanning({
   };
 
   const resetFleet = () => {
-    setBattlefield(INITIAL_BATTLEFIELD_SETUP);
+    setBattlefield({
+      name: isPc ? 'PC' : 'Player',
+      ...INITIAL_BATTLEFIELD_SETUP,
+    });
     const cells = battlefieldTable.current.querySelectorAll('td');
 
     SHIP_DETAILS.map((el) => el.color).forEach((color) => {
@@ -125,7 +130,10 @@ export default function BattlefieldPlanning({
       stage: GAME_STAGES.ready,
     });
 
-    onChange({ ...gameState, [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield });
+    onChange({
+      ...gameState,
+      [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield,
+    });
   };
 
   const genericFleet = () => {
@@ -163,7 +171,10 @@ export default function BattlefieldPlanning({
 
   // propagate changes to the parent
   useEffect(() => {
-    onChange({ ...gameState, [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield });
+    onChange({
+      ...gameState,
+      [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [battlefield.stage]);
 

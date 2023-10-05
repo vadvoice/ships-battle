@@ -138,7 +138,7 @@ export default function GameSettings({
 
   if (isGameOver) {
     return (
-      <div className="flex justify-center flex-col items-center">
+      <div className="flex justify-center flex-col items-center relative">
         <div className="actions flex self-center mt-2">
           <button
             onClick={onReset}
