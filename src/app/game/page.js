@@ -11,6 +11,7 @@ import {
 } from '@/libs/config';
 import { getRandomBetween } from '@/libs/helpers';
 import { useEffect, useState } from 'react';
+import ConfettiGenerator from 'confetti-js';
 
 export default function Game() {
   const initialGameSetupState = {
@@ -41,7 +42,10 @@ export default function Game() {
   };
 
   const onReset = () => {
-    if (!isGameOver && !window.confirm('Are you sure? Game progress will be lost!')) {
+    if (
+      !isGameOver &&
+      !window.confirm('Are you sure? Game progress will be lost!')
+    ) {
       return;
     }
 
@@ -80,7 +84,8 @@ export default function Game() {
       ship.isSunk = isSunk;
     });
 
-    const isGameOver = oppenentFleet.every((ship) => ship.isSunk === true);
+    // const isGameOver = oppenentFleet.every((ship) => ship.isSunk === true);
+    const isGameOver = true;
 
     // do record for the active player
     setGameSetup({
@@ -126,6 +131,38 @@ export default function Game() {
     }
   }, [gameSetup, gameSetup.player.stage, gameSetup.enemy.stage]);
 
+  useEffect(() => {
+    if (!isGameOver) {
+      return;
+    }
+    const confettiSettings = { target: 'congrats' };
+    const confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
+
+    return () => confetti.clear();
+  }, [isGameOver]);
+
+  if (isGameOver) {
+    return (
+      <div className="relative w-full flex justify-around flex-1 flex-col">
+        <h2 className="absolute inset-1/2 text-2xl font-bold dark:text-white text-center">
+          {gameSetup.winner} wins!
+        </h2>
+
+        <canvas className="flex flex-1" id="congrats"></canvas>
+        {/* TODO: statictics */}
+        <GameSettings
+          gameSetup={gameSetup}
+          actions={{
+            onReset,
+            onGameModeChange: onGameModeChange,
+            onChange: setGameSetup,
+            onGameStart: onGameStart,
+          }}
+        />
+      </div>
+    );
+  }
   return (
     <div className="flex flex-1 flex-col items-center p-24 h-screen">
       <h1 className="mb-4 text-xl font-extrabold text-gray-900 dark:text-white text-center">
@@ -166,14 +203,6 @@ export default function Game() {
             gameState={gameSetup}
             actions={{ onChange: setGameSetup, onShot }}
           />
-        </div>
-      ) : null}
-
-      {[GAME_STAGES.gameover].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around flex-1">
-          <h2 className="text-2xl font-bold dark:text-white text-center">
-            {gameSetup.winner} wins!
-          </h2>
         </div>
       ) : null}
 

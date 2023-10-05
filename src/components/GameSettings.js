@@ -137,21 +137,18 @@ export default function GameSettings({
   }
 
   if (isGameOver) {
-    return <div className="flex justify-center p-2 flex-col items-center">
-      <PlayerAvatar player={gameSetup.player} />
-      <h2 className="text-2xl font-bold dark:text-white text-center">{gameSetup.winner} won!</h2>
-
-      <div className="actions flex self-center mt-2">
-        <button
-          onClick={onReset}
-          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-        >
-          Quit
-        </button>
+    return (
+      <div className="flex justify-center flex-col items-center">
+        <div className="actions flex self-center mt-2">
+          <button
+            onClick={onReset}
+            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+          >
+            Quit
+          </button>
+        </div>
       </div>
-
-      <div class="js-container container" style="top:0px !important;"></div>
-    </div>
+    );
   }
 
   return (
