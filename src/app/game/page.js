@@ -31,7 +31,7 @@ export default function Game() {
     shotsAmount: 0,
   };
   const [gameSetup, setGameSetup] = useState(initialGameSetupState);
-  const isGameOver = gameSetup.stage === GAME_STAGES.gameover;
+  const isGameOverStage = gameSetup.stage === GAME_STAGES.gameover;
 
   const onGameModeChange = (mode) => {
     setGameSetup({
@@ -50,7 +50,7 @@ export default function Game() {
 
   const onReset = () => {
     if (
-      !isGameOver &&
+      !isGameOverStage &&
       !window.confirm('Are you sure? Game progress will be lost!')
     ) {
       return;
@@ -64,6 +64,7 @@ export default function Game() {
 
   const onShot = ({ shot }) => {
     const whoseTurn = gameSetup.whoseTurn;
+    shot.status = 'missed';
 
     const oppenentSide =
       whoseTurn === BATTLEFIELD_SIDES.player
@@ -75,19 +76,22 @@ export default function Game() {
     oppenentFleet.forEach((ship) => {
       ship.position.forEach((cell) => {
         if (cell.raw === shot.raw) {
-          cell.isDameged = true;
+          cell.isDamaged = true;
+          shot.status = 'hit';
+          shot.isDamaged = true;
+          shot.shipColor = cell.shipColor;
         }
       });
     });
     // mark ship sunk if all cells are damaged
     oppenentFleet.forEach((ship) => {
       const isSunk = ship.position.every((cell) => {
-        return cell.isDameged;
+        return cell.isDamaged;
       });
       const isShipDamaged = ship.position.some((cell) => {
-        return cell.isDameged;
+        return cell.isDamaged;
       });
-      ship.isDameged = isShipDamaged;
+      ship.isDamaged = isShipDamaged;
       ship.isSunk = isSunk;
     });
 
@@ -138,7 +142,7 @@ export default function Game() {
   }, [gameSetup, gameSetup.player.stage, gameSetup.enemy.stage]);
 
   useEffect(() => {
-    if (!isGameOver) {
+    if (!isGameOverStage) {
       return;
     }
     const confettiSettings = { target: 'congrats' };
@@ -146,21 +150,20 @@ export default function Game() {
     confetti.render();
 
     return () => confetti.clear();
-  }, [isGameOver]);
+  }, [isGameOverStage]);
 
-  if (isGameOver) {
+  if (isGameOverStage) {
     return (
       <div className="relative w-full flex justify-around flex-1 flex-col h-screen">
         {/* background confetti */}
         <canvas className="inset-x-0 h-screen w-screen absolute" id="congrats"></canvas>
 
-        <h2 className="text-2xl font-bold dark:text-white text-center">
+        <h2 className="text-2xl font-bold dark:text-white text-center uppercase">
           {gameSetup.winner} wins!
         </h2>
 
         <Stats gameState={gameSetup} />
 
-        {/* TODO: statictics */}
         <GameSettings
           gameSetup={gameSetup}
           actions={{
@@ -173,6 +176,7 @@ export default function Game() {
       </div>
     );
   }
+
   return (
     <div className="flex flex-1 flex-col items-center p-24 h-screen">
       <h1 className="mb-4 text-xl font-extrabold text-gray-900 dark:text-white text-center">

@@ -30,7 +30,7 @@ export const getVirtualCoords = (x, y, shipColor = '') => {
     concatenated: `x:${x};y:${y}`,
     // x and y are swapped for the raw value
     raw: `${x}${y}`,
-    isDameged: false,
+    isDamaged: false,
     shipColor,
   };
 };
@@ -178,3 +178,11 @@ export const buildTableContent = () => {
     </>
   );
 };
+
+export function financialFormat(x) {
+  return Number.parseFloat(x).toFixed(2);
+}
+
+export const getShootingAccuracy = (shotsMade, hits) => {
+  return financialFormat((hits / shotsMade) * 100);
+}
