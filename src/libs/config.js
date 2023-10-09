@@ -70,7 +70,7 @@ export const COLOR_SCHEMA = {
 
 export const GAME_MODE = {
   singlePlayer: 1,
-  multiplayer: 2,
+  multiPlayer: 2,
 };
 
 export const ROW_NAMES = 'abcdefghijklmnopqrstuvwxyz'.split('');
