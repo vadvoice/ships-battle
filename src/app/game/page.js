@@ -10,20 +10,21 @@ import {
   BATTLEFIELD_SIDES,
 } from '@/libs/config';
 import { getRandomBetween } from '@/libs/helpers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ConfettiGenerator from 'confetti-js';
 import { Stats } from '@/components/Stats';
+import SocketIO from 'socket.io-client';
 
 export default function Game() {
   const initialGameSetupState = {
     stage: GAME_STAGES.menu,
     player: {
       name: 'player',
-      ...INITIAL_BATTLEFIELD_SETUP
+      ...INITIAL_BATTLEFIELD_SETUP,
     },
     enemy: {
       name: 'enemy',
-      ...INITIAL_BATTLEFIELD_SETUP
+      ...INITIAL_BATTLEFIELD_SETUP,
     },
     mode: GAME_MODE.singlePlayer,
     whoseTurn: null,
@@ -31,6 +32,7 @@ export default function Game() {
     shotsAmount: 0,
   };
   const [gameSetup, setGameSetup] = useState(initialGameSetupState);
+  const [socket, setSocket] = useState(null);
   const isGameOverStage = gameSetup.stage === GAME_STAGES.gameover;
 
   const onGameModeChange = (mode) => {
@@ -152,11 +154,44 @@ export default function Game() {
     return () => confetti.clear();
   }, [isGameOverStage]);
 
+  const socketInitializer = useCallback(async () => {
+    // We call this just to make sure we turn on the websocket server
+    await fetch('/api/socket');
+
+    const socket = SocketIO(undefined, {
+      path: '/api/multiplayer_connection',
+    });
+
+    socket.on('connect', (con) => {
+      console.log('Connected', socket.id);
+    });
+
+    socket.on('newIncomingMessage', (msg) => {
+      console.log('New message in client', msg);
+    });
+    setSocket(socket);
+
+  }, []);
+
+  // initialize socket once multiplaer mode selected
+  useEffect(() => {
+    if (!socket && gameSetup.mode === GAME_MODE.multiPlayer) {
+      socketInitializer();
+    }
+
+    return () => {
+      socket && socket.disconnect();
+    }
+  }, [gameSetup.mode, socket, socketInitializer]);
+
   if (isGameOverStage) {
     return (
       <div className="relative w-full flex justify-around flex-1 flex-col h-screen">
         {/* background confetti */}
-        <canvas className="inset-x-0 h-screen w-screen absolute" id="congrats"></canvas>
+        <canvas
+          className="inset-x-0 h-screen w-screen absolute"
+          id="congrats"
+        ></canvas>
 
         <h2 className="text-2xl font-bold dark:text-white text-center uppercase">
           {gameSetup.winner} wins!

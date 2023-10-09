@@ -8,7 +8,7 @@ import {
 } from '@/libs/config';
 
 export default function GameSettings({
-  actions: { onReset, onGameModeChange, onGameStart },
+  actions: { onReset, onGameModeChange },
   gameSetup,
 }) {
   const isMenuState = gameSetup.stage === GAME_STAGES.menu;
@@ -77,7 +77,8 @@ export default function GameSettings({
           </button>
 
           <button
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50"
+            onClick={() => onGameModeChange(GAME_MODE.multiPlayer)}
+            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
             title="Coming soon"
           >
             2 Player
