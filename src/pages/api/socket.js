@@ -1,3 +1,4 @@
+import { ENV_VARS } from "@/libs/config";
 import { Server } from "socket.io";
 
 const onSocketConnection = (io, socket) => {
@@ -17,7 +18,7 @@ export default function handler(req, res) {
   }
 
   const io = new Server(res.socket.server, {
-    path: "/api/multiplayer_connection",
+    path: ENV_VARS.socketPath,
   });
   res.socket.server.io = io;
 
