@@ -126,7 +126,7 @@ export const buildTableContent = () => {
     <>
       <thead>
         <tr>
-          {Array(ROWS_AMOUNT)
+          {Array(ROWS_AMOUNT + 1)
             .fill()
             .map((_, headIndex) => {
               return (

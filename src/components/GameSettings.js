@@ -78,7 +78,7 @@ export default function GameSettings({
 
           <button
             onClick={() => onGameModeChange(GAME_MODE.multiPlayer)}
-            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+            className="flex items-center mr-2 bg-violet-500 hover:bg-violet-400 text-white font-bold py-2 px-4 border-b-4 border-violet-700 hover:border-violet-500 rounded"
             title="Coming soon"
           >
             2 Player

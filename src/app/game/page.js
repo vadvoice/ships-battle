@@ -213,7 +213,7 @@ export default function Game() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center p-24 h-screen">
+    <div className="flex flex-1 flex-col items-center p-2 pt-16 min-h-screen min-w-min md:px-10">
       <h1 className="mb-4 text-xl font-extrabold text-gray-900 dark:text-white text-center">
         <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
           Battle Ships
@@ -222,7 +222,7 @@ export default function Game() {
       </h1>
 
       {[GAME_STAGES.planning].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around flex-1">
+        <div className="w-full flex justify-around items-center flex-1 flex-col lg:flex-row lg:items-start">
           <BattlefieldPlanning
             isMain
             actions={{ onChange: setGameSetup }}
@@ -238,7 +238,7 @@ export default function Game() {
       ) : null}
 
       {[GAME_STAGES.ongoing].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around flex-1">
+        <div className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col">
           <Battlefield
             isMain
             enemyFleet={gameSetup.enemy.fleet}
