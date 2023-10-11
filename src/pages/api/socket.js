@@ -11,9 +11,14 @@ const onSocketConnection = (io, socket) => {
 };
 
 export default function handler(req, res) {
+  let connectCounter = 0;
   if (res.socket.server.io) {
     console.log("Server already started!");
     res.end();
+    return;
+  }
+
+  if (connectCounter >= 2) {
     return;
   }
 
@@ -22,7 +27,11 @@ export default function handler(req, res) {
   });
   res.socket.server.io = io;
 
-  const onConnection = (socket) => {
+  const onConnection = async (socket) => {
+    connectCounter++;
+    const userAmount = io.engine.clientsCount;
+
+    console.log('>>userAmount', userAmount);
     console.log("New connection", socket.id);
     onSocketConnection(io, socket);
   };

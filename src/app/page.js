@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState } from 'react';
 import ConfettiGenerator from 'confetti-js';
 import { Stats } from '@/components/Stats';
 import SocketIO from 'socket.io-client';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Game() {
   const initialGameSetupState = {
@@ -179,7 +179,6 @@ export default function Game() {
 
     socket.on('connect', (con) => {
       console.log('Connected', socket.id);
-      router.push(`/?gameSession=${socket.id}`);
     });
 
     socket.on('newIncomingMessage', (msg) => {
@@ -213,7 +212,7 @@ export default function Game() {
         <button
           className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
           onClick={() => {
-            navigator.clipboard.writeText(window.location.href);
+            navigator.clipboard.writeText(window.location.origin + `/?gameSession=${socket.id}`);
           }}
         >
           Invate Player
