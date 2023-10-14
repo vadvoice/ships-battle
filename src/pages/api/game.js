@@ -1,4 +1,4 @@
-function handler (req, res) {
+function handler(req, res) {
   if (req.method === 'POST') {
     // get message
     const message = req.body.message;

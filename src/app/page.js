@@ -11,15 +11,21 @@ import {
   ENV_VARS,
 } from '@/libs/config';
 import { getRandomBetween } from '@/libs/helpers';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ConfettiGenerator from 'confetti-js';
 import { Stats } from '@/components/Stats';
 import SocketIO from 'socket.io-client';
-import { useRouter, useSearchParams } from 'next/navigation';
+import RoomConnection from '@/components/RoomConnection';
+import { useSearchParams } from 'next/navigation';
 
 export default function Game() {
+  const params = useSearchParams();
+  const stageParam = params.get('stage');
+  const gameModeParam = params.get('mode');
+  const roomNameParam = params.get('roomName');
+
   const initialGameSetupState = {
-    stage: GAME_STAGES.menu,
+    stage: stageParam ? Number(stageParam) : GAME_STAGES.menu,
     player: {
       name: 'player',
       ...INITIAL_BATTLEFIELD_SETUP,
@@ -28,19 +34,17 @@ export default function Game() {
       name: 'enemy',
       ...INITIAL_BATTLEFIELD_SETUP,
     },
-    mode: GAME_MODE.singlePlayer,
+    roomName: null,
+    mode: gameModeParam ? +gameModeParam : GAME_MODE.singlePlayer,
     whoseTurn: null,
     winner: null,
     shotsAmount: 0,
   };
-  const router = useRouter();
-  const params = useSearchParams();
+
   const [gameSetup, setGameSetup] = useState(initialGameSetupState);
   const [socket, setSocket] = useState(null);
   const isGameOverStage = gameSetup.stage === GAME_STAGES.gameover;
   const isConnectionStage = gameSetup.stage === GAME_STAGES.connection;
-
-  const gameSession = params.get('gameSession');
 
   const onGameModeChange = (mode) => {
     if (mode === GAME_MODE.multiPlayer) {
@@ -169,7 +173,29 @@ export default function Game() {
     return () => confetti.clear();
   }, [isGameOverStage]);
 
-  const socketInitializer = useCallback(async () => {
+  const createRoom = async (roomName) => {
+    if (!socket) {
+      return;
+    }
+    onJoinRoom(roomName);
+  };
+
+  const onJoinRoom = async (roomName) => {
+    await socket.emit('join_room', roomName);
+    // socket.to(roomName).on('connection_successful', (msg) => {
+    //   console.log('connection_successful', msg);
+    //   setGameSetup({
+    //     ...gameSetup,
+    //     stage: GAME_STAGES.planning,
+    //   });
+    // });
+    setGameSetup({
+      ...gameSetup,
+      roomName,
+    });
+  };
+
+  const socketInitializer = async () => {
     // We call this just to make sure we turn on the websocket server
     await fetch('/api/socket');
 
@@ -179,45 +205,52 @@ export default function Game() {
 
     socket.on('connect', (con) => {
       console.log('Connected', socket.id);
+      setSocket(socket);
     });
 
     socket.on('newIncomingMessage', (msg) => {
       console.log('New message in client', msg);
     });
-    setSocket(socket);
-  }, [router]);
+
+    socket.on('newIncomingMessage', (msg) => {
+      console.log('New message in client', msg);
+    });
+
+    socket.on('connection_successful', (msg) => {
+      setGameSetup({
+        ...gameSetup,
+        stage: GAME_STAGES.planning,
+      });
+    });
+
+    return socket;
+  };
 
   // initialize socket once multiplaer mode selected
   useEffect(() => {
-    if (!socket && gameSetup.mode === GAME_MODE.multiPlayer) {
-      socketInitializer();
+    const isConnectionHaveToEstablished =
+      gameSetup.mode === GAME_MODE.multiPlayer &&
+      !socket &&
+      isConnectionStage;
+
+    if (!isConnectionHaveToEstablished) {
+      return;
     }
+    socketInitializer();
 
     return () => {
       socket && socket.disconnect();
     };
-  }, [gameSetup.mode, socket, socketInitializer]);
-
-  useEffect(() => {
-    if (socket || !gameSession) {
-      return;
-    }
-    socketInitializer();
-  }, [gameSession, socket, socketInitializer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameSetup.mode]);
 
   if (isConnectionStage) {
     return (
-      <div className="relative w-full flex justify-center flex-1 h-screen items-center">
-        <h1>Connection stage</h1>
-        <button
-          className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-          onClick={() => {
-            navigator.clipboard.writeText(window.location.origin + `/?gameSession=${socket.id}`);
-          }}
-        >
-          Invate Player
-        </button>
-      </div>
+      <RoomConnection
+        socket={socket}
+        gameState={gameSetup}
+        actions={{ createRoom, onJoinRoom }}
+      />
     );
   }
 
@@ -250,7 +283,7 @@ export default function Game() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center p-2 pt-16 min-h-screen min-w-min md:px-10">
+    <div className="flex flex-1 flex-col items-center">
       <h1 className="mb-4 text-xl font-extrabold text-gray-900 dark:text-white text-center">
         <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
           Battle Ships
