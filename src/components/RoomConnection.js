@@ -1,4 +1,4 @@
-import { GAME_MODE, GAME_STAGES } from '@/libs/config';
+import { BATTLEFIELD_SIDES, GAME_MODE, GAME_STAGES } from '@/libs/config';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
@@ -25,6 +25,10 @@ export default function RoomConnection({
     setConnectionState({ roomName: e.target.value });
   };
 
+  if (!socket) {
+    return;
+  }
+
   if (roomName) {
     return (
       <div>
@@ -35,7 +39,7 @@ export default function RoomConnection({
           onClick={() => {
             navigator.clipboard.writeText(
               window.location.origin +
-                `/?roomName=${roomName}&stage=${GAME_STAGES.connection}&mode=${GAME_MODE.multiPlayer}`
+                `/?roomName=${roomName}&stage=${GAME_STAGES.connection}&mode=${GAME_MODE.multiPlayer}&role=${BATTLEFIELD_SIDES.enemy}`
             );
           }}
         >

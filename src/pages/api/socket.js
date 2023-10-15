@@ -1,31 +1,30 @@
 import { ENV_VARS } from '@/libs/config';
 import { Server } from 'socket.io';
-// TOOD: redo...
-let connectionCounter = 0;
 
 const onSocketConnection = async (io, socket) => {
-  const createdMessage = (msg) => {
-    console.log('New message', msg);
-    socket.broadcast.emit('newIncomingMessage', msg);
-  };
-
-  socket.on('createdMessage', createdMessage);
+  socket.on('user_send_action', (gameState) => {
+    console.log('user_send_action', gameState.role, gameState[gameState.role].stage);
+    console.log('socket.rooms[0]:', socket.rooms, Array.from(socket.rooms).pop());
+    socket.to('theName').emit('user_action', gameState);
+  });
 
   socket.on('join_room', async (roomName) => {
     await socket.join(roomName);
     console.log(`user with id ${socket.id} joined room - ${roomName}`);
-    // const clients = io.sockets.clients(roomName);
-    connectionCounter++;
-    console.log('connectionCounter', connectionCounter);
-    const clients = await io.in(roomName).fetchSockets()
+    const clients = await io.in(roomName).fetchSockets();
     if (clients.length >= 2) {
-      // socket.broadcast.emit('connection_successful', 'go!');
-      socket.to(roomName).emit("connection_successful", 'go!');
+      io.sockets.in(roomName).emit('connection_successful', 'go!');
     }
   });
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected:", socket.id);
+  socket.on('disconnecting', () => {
+    socket.rooms.forEach((room) => {
+      socket.to(room).emit('user_disconnected', { id: socket.id, room });
+    });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected:', socket.id);
   });
 };
 

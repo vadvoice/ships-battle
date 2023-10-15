@@ -9,9 +9,10 @@ import {
   INITIAL_BATTLEFIELD_SETUP,
   BATTLEFIELD_SIDES,
   ENV_VARS,
+  GAME_STAGE_MAP,
 } from '@/libs/config';
 import { getRandomBetween } from '@/libs/helpers';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ConfettiGenerator from 'confetti-js';
 import { Stats } from '@/components/Stats';
 import SocketIO from 'socket.io-client';
@@ -22,18 +23,19 @@ export default function Game() {
   const params = useSearchParams();
   const stageParam = params.get('stage');
   const gameModeParam = params.get('mode');
-  const roomNameParam = params.get('roomName');
+  const roleParam = params.get('role');
 
   const initialGameSetupState = {
     stage: stageParam ? Number(stageParam) : GAME_STAGES.menu,
     player: {
-      name: 'player',
+      name: BATTLEFIELD_SIDES.player,
       ...INITIAL_BATTLEFIELD_SETUP,
     },
     enemy: {
-      name: 'enemy',
+      name: BATTLEFIELD_SIDES.enemy,
       ...INITIAL_BATTLEFIELD_SETUP,
     },
+    role: roleParam || BATTLEFIELD_SIDES.player,
     roomName: null,
     mode: gameModeParam ? +gameModeParam : GAME_MODE.singlePlayer,
     whoseTurn: null,
@@ -42,7 +44,9 @@ export default function Game() {
   };
 
   const [gameSetup, setGameSetup] = useState(initialGameSetupState);
+  const gameSetupRef = useRef(gameSetup);
   const [socket, setSocket] = useState(null);
+  const isPc = gameSetup.mode === GAME_MODE.singlePlayer;
   const isGameOverStage = gameSetup.stage === GAME_STAGES.gameover;
   const isConnectionStage = gameSetup.stage === GAME_STAGES.connection;
 
@@ -136,6 +140,17 @@ export default function Game() {
     });
   };
 
+  // NOTE: hack to set the current game setup to ref avoiding set state hook
+  // because socket.io ignores the component’s lifecycle methods and sees only the first render of the game state
+  // SOURCE: https://medium.com/@kishorkrishna/cant-access-latest-state-inside-socket-io-listener-heres-how-to-fix-it-1522a5abebdb
+  useEffect(() => {
+    gameSetupRef.current = gameSetup;
+    // TODO: possibly could be moved to the parent
+    // TODO: potentially memory leak
+    socket && socket.emit('user_send_action', gameSetup);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameSetup]);
+
   // wait for both players to be ready to start the game
   useEffect(() => {
     if (
@@ -146,7 +161,7 @@ export default function Game() {
       // get random side between player and enemy
       // could be added as separate stage
       const side = Object.keys(BATTLEFIELD_SIDES)[getRandomBetween(0, 1)];
-      setGameSetup({
+      const nextGameState = {
         ...gameSetup,
         stage: GAME_STAGES.ongoing,
         whoseTurn: side,
@@ -158,9 +173,10 @@ export default function Game() {
           ...gameSetup.enemy,
           stage: GAME_STAGES.ongoing,
         },
-      });
+      };
+      setGameSetup(nextGameState);
     }
-  }, [gameSetup, gameSetup.player.stage, gameSetup.enemy.stage]);
+  }, [gameSetup]);
 
   useEffect(() => {
     if (!isGameOverStage) {
@@ -182,13 +198,6 @@ export default function Game() {
 
   const onJoinRoom = async (roomName) => {
     await socket.emit('join_room', roomName);
-    // socket.to(roomName).on('connection_successful', (msg) => {
-    //   console.log('connection_successful', msg);
-    //   setGameSetup({
-    //     ...gameSetup,
-    //     stage: GAME_STAGES.planning,
-    //   });
-    // });
     setGameSetup({
       ...gameSetup,
       roomName,
@@ -208,12 +217,17 @@ export default function Game() {
       setSocket(socket);
     });
 
-    socket.on('newIncomingMessage', (msg) => {
-      console.log('New message in client', msg);
-    });
-
-    socket.on('newIncomingMessage', (msg) => {
-      console.log('New message in client', msg);
+    // on revive opponent action
+    socket.on('user_action', (incomingGameState) => {
+      const currentGameState = gameSetupRef.current;
+      setGameSetup({
+        ...currentGameState,
+        stage:
+          currentGameState.stage === GAME_STAGES.connection
+            ? GAME_STAGES.planning
+            : currentGameState.stage,
+        [incomingGameState.role]: incomingGameState[incomingGameState.role],
+      });
     });
 
     socket.on('connection_successful', (msg) => {
@@ -223,15 +237,18 @@ export default function Game() {
       });
     });
 
+    socket.on('user_disconnected', (msg) => {
+      console.log('opponent disconnected', msg);
+      setGameSetup(initialGameSetupState);
+    });
+
     return socket;
   };
 
   // initialize socket once multiplaer mode selected
   useEffect(() => {
     const isConnectionHaveToEstablished =
-      gameSetup.mode === GAME_MODE.multiPlayer &&
-      !socket &&
-      isConnectionStage;
+      gameSetup.mode === GAME_MODE.multiPlayer && !socket && isConnectionStage;
 
     if (!isConnectionHaveToEstablished) {
       return;
@@ -295,15 +312,19 @@ export default function Game() {
         <div className="w-full flex justify-around items-center flex-1 flex-col lg:flex-row lg:items-start">
           <BattlefieldPlanning
             isMain
+            socket={socket}
             actions={{ onChange: setGameSetup }}
             gameState={gameSetup}
           />
 
-          <BattlefieldPlanning
-            isPc
-            actions={{ onChange: setGameSetup }}
-            gameState={gameSetup}
-          />
+          {isPc ? (
+            <BattlefieldPlanning
+              isPc={isPc}
+              socket={socket}
+              actions={{ onChange: setGameSetup }}
+              gameState={gameSetup}
+            />
+          ) : null}
         </div>
       ) : null}
 
@@ -317,7 +338,7 @@ export default function Game() {
           />
 
           <Battlefield
-            isPc
+            isPc={isPc}
             enemyFleet={gameSetup.player.fleet}
             gameState={gameSetup}
             actions={{ onChange: setGameSetup, onShot }}

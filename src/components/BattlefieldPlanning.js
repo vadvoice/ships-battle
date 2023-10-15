@@ -3,6 +3,7 @@ import {
   BATTLEFIELD_SIDES,
   COLOR_SCHEMA,
   GAME_STAGES,
+  GAME_STAGE_MAP,
   INITIAL_BATTLEFIELD_SETUP,
   SHIP_DETAILS,
 } from '@/libs/config';
@@ -17,10 +18,11 @@ import BattlefieldSettings from './BattlefieldSettings';
 export default function BattlefieldPlanning({
   actions: { onChange },
   gameState,
+  socket,
   isPc = false,
 }) {
   const [battlefield, setBattlefield] = useState({
-    name: isPc ? 'PC' : 'Player',
+    name: isPc ? 'PC' : gameState.role,
     ...INITIAL_BATTLEFIELD_SETUP,
   });
   const battlefieldTable = useRef();
@@ -112,7 +114,7 @@ export default function BattlefieldPlanning({
 
   const resetFleet = () => {
     setBattlefield({
-      name: isPc ? 'PC' : 'Player',
+      name: isPc ? 'PC' : gameState.role,
       ...INITIAL_BATTLEFIELD_SETUP,
     });
     const cells = battlefieldTable.current.querySelectorAll('td');
@@ -171,10 +173,11 @@ export default function BattlefieldPlanning({
 
   // propagate changes to the parent
   useEffect(() => {
-    onChange({
+    const nextGameState = {
       ...gameState,
-      [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield,
-    });
+      [isPc ? BATTLEFIELD_SIDES.enemy : gameState.role]: battlefield,
+    };
+    onChange(nextGameState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [battlefield.stage]);
 
