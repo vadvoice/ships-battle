@@ -9,7 +9,6 @@ import {
   INITIAL_BATTLEFIELD_SETUP,
   BATTLEFIELD_SIDES,
   ENV_VARS,
-  GAME_STAGE_MAP,
 } from '@/libs/config';
 import { getRandomBetween } from '@/libs/helpers';
 import { useEffect, useRef, useState } from 'react';
@@ -123,7 +122,7 @@ export default function Game() {
     const isGameOver = oppenentFleet.every((ship) => ship.isSunk === true);
 
     // do record for the active player
-    setGameSetup({
+    const nextGameState = {
       ...gameSetup,
       shotsAmount: gameSetup.shotsAmount + 1,
       [whoseTurn]: {
@@ -137,7 +136,9 @@ export default function Game() {
       whoseTurn: oppenentSide,
       stage: isGameOver ? GAME_STAGES.gameover : GAME_STAGES.ongoing,
       winner: whoseTurn,
-    });
+    };
+    setGameSetup(nextGameState);
+    socket && socket.emit('user_send_battle_action', nextGameState);
   };
 
   // NOTE: hack to set the current game setup to ref avoiding set state hook
@@ -145,9 +146,6 @@ export default function Game() {
   // SOURCE: https://medium.com/@kishorkrishna/cant-access-latest-state-inside-socket-io-listener-heres-how-to-fix-it-1522a5abebdb
   useEffect(() => {
     gameSetupRef.current = gameSetup;
-    // TODO: possibly could be moved to the parent
-    // TODO: potentially memory leak
-    socket && socket.emit('user_send_action', gameSetup);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameSetup]);
 
@@ -164,7 +162,7 @@ export default function Game() {
       const nextGameState = {
         ...gameSetup,
         stage: GAME_STAGES.ongoing,
-        whoseTurn: side,
+        whoseTurn: gameSetup.mode === GAME_MODE.singlePlayer ? side : BATTLEFIELD_SIDES.player,
         player: {
           ...gameSetup.player,
           stage: GAME_STAGES.ongoing,
@@ -176,6 +174,7 @@ export default function Game() {
       };
       setGameSetup(nextGameState);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameSetup]);
 
   useEffect(() => {
@@ -218,15 +217,24 @@ export default function Game() {
     });
 
     // on revive opponent action
-    socket.on('user_action', (incomingGameState) => {
+    socket.on('user_planning_action_emit', (incomingGameState) => {
       const currentGameState = gameSetupRef.current;
+      const { role, ...rest } = incomingGameState;
       setGameSetup({
         ...currentGameState,
-        stage:
-          currentGameState.stage === GAME_STAGES.connection
-            ? GAME_STAGES.planning
-            : currentGameState.stage,
+        stage: incomingGameState.stage,
         [incomingGameState.role]: incomingGameState[incomingGameState.role],
+        ...rest,
+      });
+    });
+
+    // TODO: more creativity in naming
+    socket.on('user_battle_action_emit', (incomingGameState) => {
+      const currentGameState = gameSetupRef.current;
+      const { role, ...rest } = incomingGameState;
+      setGameSetup({
+        ...currentGameState,
+        ...rest,
       });
     });
 
@@ -273,7 +281,7 @@ export default function Game() {
 
   if (isGameOverStage) {
     return (
-      <div className="relative w-full flex justify-center flex-1 h-screen">
+      <div className="relative w-full flex justify-center flex-1 h-screen flex-col">
         {/* background confetti */}
         <canvas
           className="inset-x-0 h-screen w-screen absolute"
@@ -311,7 +319,6 @@ export default function Game() {
       {[GAME_STAGES.planning].includes(gameSetup.stage) ? (
         <div className="w-full flex justify-around items-center flex-1 flex-col lg:flex-row lg:items-start">
           <BattlefieldPlanning
-            isMain
             socket={socket}
             actions={{ onChange: setGameSetup }}
             gameState={gameSetup}
@@ -331,15 +338,16 @@ export default function Game() {
       {[GAME_STAGES.ongoing].includes(gameSetup.stage) ? (
         <div className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col">
           <Battlefield
-            isMain
-            enemyFleet={gameSetup.enemy.fleet}
+            isPlayer
+            socket={socket}
             gameState={gameSetup}
             actions={{ onChange: setGameSetup, onShot }}
           />
 
           <Battlefield
+            isEnemy
             isPc={isPc}
-            enemyFleet={gameSetup.player.fleet}
+            socket={socket}
             gameState={gameSetup}
             actions={{ onChange: setGameSetup, onShot }}
           />

@@ -5,7 +5,7 @@ export const Stats = ({ gameState }) => {
   const playerShootingAccuracy = getShootingAccuracy(gameState.player.combatLog.length, gameState.player.combatLog.filter((el) => el.isDamaged).length)
   const enemyShootingAccuracy = getShootingAccuracy(gameState.enemy.combatLog.length, gameState.enemy.combatLog.filter((el) => el.isDamaged).length)
   return (
-    <div className="w-full flex">
+    <div className="w-full flex flex-1">
       <div className="relative overflow-x-auto w-full shadow-md sm:rounded-lg mx-5">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

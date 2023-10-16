@@ -101,7 +101,7 @@ export default function GameSettings({
         <div className="flex mt-3">
           <div className={`relative flex items-center mx-3`}>
             <PlayerAvatar player={gameSetup.player} />
-            <h5 className="font-bold dark:text-white text-center">Player 1</h5>
+            <h5 className="font-bold dark:text-white text-center">Alliance</h5>
             <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
               <span
                 className={`${
@@ -113,7 +113,7 @@ export default function GameSettings({
           </div>
           <div className={`relative flex items-center mx-3`}>
             <PlayerAvatar player={gameSetup.enemy} />
-            <h5 className="font-bold dark:text-white text-center">Player 2</h5>
+            <h5 className="font-bold dark:text-white text-center">Horde</h5>
 
             <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
               <span

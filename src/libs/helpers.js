@@ -121,7 +121,7 @@ export const getRandomShotCoords = () => {
   return getVirtualCoords(randomColumnIndex, randomRowIndex);
 };
 
-export const buildTableContent = () => {
+export const buildTableContent = (side = '') => {
   return (
     <>
       <thead>
@@ -165,6 +165,7 @@ export const buildTableContent = () => {
                         key={`table-data-${innerIndex}`}
                         className={`${CELL_WIDTH} ${CELL_HEIGHT} text-center border-solid border-2 border-indigo-600 rounded relative hover:bg-sky-700 cursor-pointer`}
                         data-index={innerIndex}
+                        data-side={side}
                         data-row={index + 1}
                       >
                         {/* {innerIndex} */}

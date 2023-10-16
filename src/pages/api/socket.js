@@ -2,10 +2,12 @@ import { ENV_VARS } from '@/libs/config';
 import { Server } from 'socket.io';
 
 const onSocketConnection = async (io, socket) => {
-  socket.on('user_send_action', (gameState) => {
-    console.log('user_send_action', gameState.role, gameState[gameState.role].stage);
-    console.log('socket.rooms[0]:', socket.rooms, Array.from(socket.rooms).pop());
-    socket.to('theName').emit('user_action', gameState);
+  socket.on('user_send_planning_action', (gameState) => {
+    socket.to(Array.from(socket.rooms).pop()).emit('user_planning_action_emit', gameState);
+  });
+
+  socket.on('user_send_battle_action', (gameState) => {
+    socket.to(Array.from(socket.rooms).pop()).emit('user_battle_action_emit', gameState);
   });
 
   socket.on('join_room', async (roomName) => {

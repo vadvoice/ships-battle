@@ -21,7 +21,6 @@ export default function RoomConnection({
   };
 
   const onRoomNameChange = (e) => {
-    console.log('>>>e.target.value', e.target.value);
     setConnectionState({ roomName: e.target.value });
   };
 

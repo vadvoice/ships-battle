@@ -9,21 +9,19 @@ import React, { useRef, useState, useEffect } from 'react';
 
 export default function Battlefield({
   isPc,
-  isMain,
+  isPlayer,
+  isEnemy,
   gameState,
   actions: { onShot },
 }) {
   // TODO: confusing naming and values too
+  const isClickAllowed = gameState.whoseTurn === gameState.role;
   const battlefieldTable = useRef();
-  const initialBattlefieldSetup = isPc
+  const initialBattlefieldSetup = isEnemy
     ? gameState.enemy
     : gameState.player;
-  const playerSide = isMain
-    ? BATTLEFIELD_SIDES.player
-    : BATTLEFIELD_SIDES.enemy;
-  const isFireAllowed = gameState.whoseTurn === playerSide;
   const [battlefield,] = useState(initialBattlefieldSetup);
-  const enemySide = isMain ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player;
+  const enemySide = isPlayer ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player;
   let activeCell = null;
 
   const onMouseMove = (e) => {
@@ -46,7 +44,7 @@ export default function Battlefield({
   }
 
   useEffect(() => {
-    if (!isFireAllowed) {
+    if (!isClickAllowed) {
       return;
     }
 
@@ -66,7 +64,7 @@ export default function Battlefield({
       onShot({ shot: randomCoords, isPc });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFireAllowed]);
+  }, [isClickAllowed]);
  
   // once compat log is changed, we need to highlight the last shot on the enemy battlefield
   useEffect(() => {
@@ -114,10 +112,16 @@ export default function Battlefield({
     if (e.target.tagName !== 'TD') {
       return;
     }
-    // REDO: check for the active player
-    if (isMain) {
+    // allow click only on users turn
+    if (!isClickAllowed) {
       return;
     }
+
+    // avoid click on oun battlefield
+    if (e.target.dataset.side === gameState.role) {
+      return; 
+    }
+
     const coords = getVirtualCoords(
       +e.target.dataset.index,
       +e.target.dataset.row
@@ -161,7 +165,7 @@ export default function Battlefield({
   return (
     <div>
       <h4 className="text-2xl font-bold dark:text-white text-center my-2">
-        {isPc ? 'PC' : 'Player'}
+        {isEnemy ? 'Horde' : 'Alliance'}
       </h4>
 
       <table
@@ -171,7 +175,7 @@ export default function Battlefield({
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
       >
-        {buildTableContent()}
+        {buildTableContent(isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy)}
       </table>
     </div>
   );

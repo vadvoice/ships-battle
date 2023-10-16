@@ -131,11 +131,6 @@ export default function BattlefieldPlanning({
       ...battlefield,
       stage: GAME_STAGES.ready,
     });
-
-    onChange({
-      ...gameState,
-      [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield,
-    });
   };
 
   const genericFleet = () => {
@@ -178,8 +173,11 @@ export default function BattlefieldPlanning({
       [isPc ? BATTLEFIELD_SIDES.enemy : gameState.role]: battlefield,
     };
     onChange(nextGameState);
+
+    // TODO: potentially memory leak
+    socket && socket.emit('user_send_planning_action', nextGameState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [battlefield.stage]);
+  }, [battlefield]);
 
   // highlight ship on the battlefield
   useEffect(() => {
