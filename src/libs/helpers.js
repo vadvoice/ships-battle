@@ -30,7 +30,7 @@ export const getVirtualCoords = (x, y, shipColor = '') => {
     concatenated: `x:${x};y:${y}`,
     // x and y are swapped for the raw value
     raw: `${x}${y}`,
-    isDameged: false,
+    isDamaged: false,
     shipColor,
   };
 };
@@ -121,12 +121,12 @@ export const getRandomShotCoords = () => {
   return getVirtualCoords(randomColumnIndex, randomRowIndex);
 };
 
-export const buildTableContent = () => {
+export const buildTableContent = (side = '') => {
   return (
     <>
       <thead>
         <tr>
-          {Array(ROWS_AMOUNT)
+          {Array(ROWS_AMOUNT + 1)
             .fill()
             .map((_, headIndex) => {
               return (
@@ -165,6 +165,7 @@ export const buildTableContent = () => {
                         key={`table-data-${innerIndex}`}
                         className={`${CELL_WIDTH} ${CELL_HEIGHT} text-center border-solid border-2 border-indigo-600 rounded relative hover:bg-sky-700 cursor-pointer`}
                         data-index={innerIndex}
+                        data-side={side}
                         data-row={index + 1}
                       >
                         {/* {innerIndex} */}
@@ -178,3 +179,11 @@ export const buildTableContent = () => {
     </>
   );
 };
+
+export function financialFormat(x) {
+  return Number.parseFloat(x).toFixed(2);
+}
+
+export const getShootingAccuracy = (shotsMade, hits) => {
+  return financialFormat((hits / shotsMade) * 100);
+}

@@ -8,7 +8,7 @@ import {
 } from '@/libs/config';
 
 export default function GameSettings({
-  actions: { onReset, onGameModeChange, onGameStart },
+  actions: { onReset, onGameModeChange },
   gameSetup,
 }) {
   const isMenuState = gameSetup.stage === GAME_STAGES.menu;
@@ -77,7 +77,8 @@ export default function GameSettings({
           </button>
 
           <button
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50"
+            onClick={() => onGameModeChange(GAME_MODE.multiPlayer)}
+            className="flex items-center mr-2 bg-violet-500 hover:bg-violet-400 text-white font-bold py-2 px-4 border-b-4 border-violet-700 hover:border-violet-500 rounded"
             title="Coming soon"
           >
             2 Player
@@ -100,7 +101,7 @@ export default function GameSettings({
         <div className="flex mt-3">
           <div className={`relative flex items-center mx-3`}>
             <PlayerAvatar player={gameSetup.player} />
-            <h5 className="font-bold dark:text-white text-center">Player 1</h5>
+            <h5 className="font-bold dark:text-white text-center">Alliance</h5>
             <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
               <span
                 className={`${
@@ -112,7 +113,7 @@ export default function GameSettings({
           </div>
           <div className={`relative flex items-center mx-3`}>
             <PlayerAvatar player={gameSetup.enemy} />
-            <h5 className="font-bold dark:text-white text-center">Player 2</h5>
+            <h5 className="font-bold dark:text-white text-center">Horde</h5>
 
             <span className="absolute left-0 flex h-3 w-3 ml-2 self-baseline">
               <span
@@ -137,21 +138,18 @@ export default function GameSettings({
   }
 
   if (isGameOver) {
-    return <div className="flex justify-center p-2 flex-col items-center">
-      <PlayerAvatar player={gameSetup.player} />
-      <h2 className="text-2xl font-bold dark:text-white text-center">{gameSetup.winner} won!</h2>
-
-      <div className="actions flex self-center mt-2">
-        <button
-          onClick={onReset}
-          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-        >
-          Quit
-        </button>
+    return (
+      <div className="flex justify-center flex-col items-center relative">
+        <div className="actions flex self-center mt-2">
+          <button
+            onClick={onReset}
+            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+          >
+            Quit
+          </button>
+        </div>
       </div>
-
-      <div class="js-container container" style="top:0px !important;"></div>
-    </div>
+    );
   }
 
   return (

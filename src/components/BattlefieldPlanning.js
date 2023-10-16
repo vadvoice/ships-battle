@@ -3,6 +3,7 @@ import {
   BATTLEFIELD_SIDES,
   COLOR_SCHEMA,
   GAME_STAGES,
+  GAME_STAGE_MAP,
   INITIAL_BATTLEFIELD_SETUP,
   SHIP_DETAILS,
 } from '@/libs/config';
@@ -17,11 +18,14 @@ import BattlefieldSettings from './BattlefieldSettings';
 export default function BattlefieldPlanning({
   actions: { onChange },
   gameState,
+  socket,
   isPc = false,
 }) {
-  const [battlefield, setBattlefield] = useState(INITIAL_BATTLEFIELD_SETUP);
+  const [battlefield, setBattlefield] = useState({
+    name: isPc ? 'PC' : gameState.role,
+    ...INITIAL_BATTLEFIELD_SETUP,
+  });
   const battlefieldTable = useRef();
-  const isMenuState = battlefield.stage === GAME_STAGES.menu;
   const isPlanningStage = battlefield.stage === GAME_STAGES.planning;
 
   const resetBattleFieldOngoingProcess = useCallback(() => {
@@ -109,7 +113,10 @@ export default function BattlefieldPlanning({
   };
 
   const resetFleet = () => {
-    setBattlefield(INITIAL_BATTLEFIELD_SETUP);
+    setBattlefield({
+      name: isPc ? 'PC' : gameState.role,
+      ...INITIAL_BATTLEFIELD_SETUP,
+    });
     const cells = battlefieldTable.current.querySelectorAll('td');
 
     SHIP_DETAILS.map((el) => el.color).forEach((color) => {
@@ -124,8 +131,6 @@ export default function BattlefieldPlanning({
       ...battlefield,
       stage: GAME_STAGES.ready,
     });
-
-    onChange({ ...gameState, [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield });
   };
 
   const genericFleet = () => {
@@ -163,9 +168,16 @@ export default function BattlefieldPlanning({
 
   // propagate changes to the parent
   useEffect(() => {
-    onChange({ ...gameState, [isPc ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player]: battlefield });
+    const nextGameState = {
+      ...gameState,
+      [isPc ? BATTLEFIELD_SIDES.enemy : gameState.role]: battlefield,
+    };
+    onChange(nextGameState);
+
+    // TODO: potentially memory leak
+    socket && socket.emit('user_send_planning_action', nextGameState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [battlefield.stage]);
+  }, [battlefield]);
 
   // highlight ship on the battlefield
   useEffect(() => {

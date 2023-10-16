@@ -1,19 +1,21 @@
 export const GAME_STAGES = {
   menu: 0,
-  planning: 1,
-  planningComplete: 2,
-  ready: 3,
-  ongoing: 4,
-  gameover: 5,
+  connection: 1,
+  planning: 2,
+  planningComplete: 3,
+  ready: 4,
+  ongoing: 5,
+  gameover: 6,
 };
 
 export const GAME_STAGE_MAP = {
   0: 'Menu',
-  1: 'Planning',
-  2: 'Planning Complete',
-  3: 'Ready',
-  4: 'Game',
-  5: 'gameover',
+  1: 'Connection',
+  2: 'Planning',
+  3: 'Planning Complete',
+  4: 'Ready',
+  5: 'Game',
+  6: 'gameover',
 };
 
 export const SHIP_DETAILS = [
@@ -21,7 +23,7 @@ export const SHIP_DETAILS = [
     name: 'carrier',
     length: 5,
     amount: 1,
-    isDameged: false,
+    isDamaged: false,
     color: 'bg-red-400',
     isSunk: false,
   },
@@ -29,7 +31,7 @@ export const SHIP_DETAILS = [
     name: 'battleship',
     length: 4,
     amount: 1,
-    isDameged: false,
+    isDamaged: false,
     color: 'bg-blue-500',
     isSunk: false,
   },
@@ -37,7 +39,7 @@ export const SHIP_DETAILS = [
     name: 'cruiser',
     length: 3,
     amount: 1,
-    isDameged: false,
+    isDamaged: false,
     color: 'bg-green-500',
     isSunk: false,
   },
@@ -45,7 +47,7 @@ export const SHIP_DETAILS = [
     name: 'destroyer',
     length: 3,
     amount: 1,
-    isDameged: false,
+    isDamaged: false,
     color: 'bg-yellow-500',
     isSunk: false,
   },
@@ -53,7 +55,7 @@ export const SHIP_DETAILS = [
     name: 'frigate',
     length: 2,
     amount: 1,
-    isDameged: false,
+    isDamaged: false,
     color: 'bg-purple-500',
     isSunk: false,
   },
@@ -70,7 +72,7 @@ export const COLOR_SCHEMA = {
 
 export const GAME_MODE = {
   singlePlayer: 1,
-  multiplayer: 2,
+  multiPlayer: 2,
 };
 
 export const ROW_NAMES = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -96,4 +98,8 @@ export const INITIAL_BATTLEFIELD_SETUP = {
 export const BATTLEFIELD_SIDES = {
   player: 'player',
   enemy: 'enemy',
+};
+
+export const ENV_VARS = {
+  socketPath: process.env.SOCKET_MULTIPLAYER_PATH || '/api/multiplayer_connection',
 };
