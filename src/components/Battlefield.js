@@ -44,11 +44,7 @@ export default function Battlefield({
   }
 
   useEffect(() => {
-    if (!isClickAllowed) {
-      return;
-    }
-
-    if (!isPc) {
+    if (!isPc || isClickAllowed) {
       return;
     }
 
