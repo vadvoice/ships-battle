@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
         <header>
           <Navbar />
         </header>
-        <div className="flex flex-1 flex-col items-center p-2 pt-16 min-h-screen min-w-min md:px-10">
+        <div className="flex flex-1 flex-col items-center p-2 pt-16 min-h-screen min-w-min md:px-10 bg-gradient-to-r to-blue-600 from-red-600">
           {children}
         </div>
       </body>

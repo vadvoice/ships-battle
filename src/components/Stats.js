@@ -2,8 +2,14 @@ import { BATTLEFIELD_SIDES } from '@/libs/config';
 import { getShootingAccuracy } from '@/libs/helpers';
 
 export const Stats = ({ gameState }) => {
-  const playerShootingAccuracy = getShootingAccuracy(gameState.player.combatLog.length, gameState.player.combatLog.filter((el) => el.isDamaged).length)
-  const enemyShootingAccuracy = getShootingAccuracy(gameState.enemy.combatLog.length, gameState.enemy.combatLog.filter((el) => el.isDamaged).length)
+  const playerShootingAccuracy = getShootingAccuracy(
+    gameState.player.combatLog.length,
+    gameState.player.combatLog.filter((el) => el.isDamaged).length
+  );
+  const enemyShootingAccuracy = getShootingAccuracy(
+    gameState.enemy.combatLog.length,
+    gameState.enemy.combatLog.filter((el) => el.isDamaged).length
+  );
   return (
     <div className="w-full flex flex-1">
       <div className="relative overflow-x-auto w-full shadow-md sm:rounded-lg mx-5">
@@ -33,15 +39,15 @@ export const Stats = ({ gameState }) => {
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {gameState.player.name}
+                Alliance
               </th>
               <td className="px-6 py-4">{gameState.player.combatLog.length}</td>
-              <td className="px-6 py-4">{gameState.player.combatLog.filter((el) => el.isDamaged).length}</td>
+              <td className="px-6 py-4">
+                {gameState.player.combatLog.filter((el) => el.isDamaged).length}
+              </td>
               <td className="px-6 py-4">{playerShootingAccuracy}%</td>
               <td className="px-6 py-4">
-                {gameState.winner === BATTLEFIELD_SIDES.player
-                  ? '✅'
-                  : '❌'}
+                {gameState.winner === BATTLEFIELD_SIDES.player ? '✅' : '❌'}
               </td>
             </tr>
             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -49,15 +55,15 @@ export const Stats = ({ gameState }) => {
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {gameState.enemy.name}
+                Horde
               </th>
               <td className="px-6 py-4">{gameState.enemy.combatLog.length}</td>
-              <td className="px-6 py-4">{gameState.enemy.combatLog.filter((el) => el.isDamaged).length}</td>
+              <td className="px-6 py-4">
+                {gameState.enemy.combatLog.filter((el) => el.isDamaged).length}
+              </td>
               <td className="px-6 py-4">{enemyShootingAccuracy}%</td>
               <td className="px-6 py-4">
-                {gameState.winner === BATTLEFIELD_SIDES.enemy
-                  ? '✅'
-                  : '❌'}
+                {gameState.winner === BATTLEFIELD_SIDES.enemy ? '✅' : '❌'}
               </td>
             </tr>
           </tbody>

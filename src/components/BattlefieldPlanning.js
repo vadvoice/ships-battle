@@ -210,7 +210,7 @@ export default function BattlefieldPlanning({
   return (
     <div>
       <h4 className="text-2xl font-bold dark:text-white text-center my-2">
-        {isPc ? 'PC' : 'Player'}
+        {isPc ? 'PC' : gameState.name}
       </h4>
 
       <table

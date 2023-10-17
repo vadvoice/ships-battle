@@ -163,7 +163,7 @@ export const buildTableContent = (side = '') => {
                     return (
                       <td
                         key={`table-data-${innerIndex}`}
-                        className={`${CELL_WIDTH} ${CELL_HEIGHT} text-center border-solid border-2 border-indigo-600 rounded relative hover:bg-sky-700 cursor-pointer`}
+                        className={`${CELL_WIDTH} ${CELL_HEIGHT} text-center border-solid border-2 border-violet-50	 rounded relative hover:bg-sky-700 cursor-pointer`}
                         data-index={innerIndex}
                         data-side={side}
                         data-row={index + 1}

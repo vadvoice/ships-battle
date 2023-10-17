@@ -9,6 +9,7 @@ import {
   INITIAL_BATTLEFIELD_SETUP,
   BATTLEFIELD_SIDES,
   ENV_VARS,
+  BATTLEFIELD_NICKNAMES,
 } from '@/libs/config';
 import { getRandomBetween } from '@/libs/helpers';
 import { useEffect, useRef, useState } from 'react';
@@ -35,6 +36,9 @@ export default function Game() {
       ...INITIAL_BATTLEFIELD_SETUP,
     },
     role: roleParam || BATTLEFIELD_SIDES.player,
+    name: roleParam
+      ? BATTLEFIELD_NICKNAMES[roleParam]
+      : BATTLEFIELD_NICKNAMES[BATTLEFIELD_SIDES.player],
     roomName: null,
     mode: gameModeParam ? +gameModeParam : GAME_MODE.singlePlayer,
     whoseTurn: null,
@@ -162,7 +166,10 @@ export default function Game() {
       const nextGameState = {
         ...gameSetup,
         stage: GAME_STAGES.ongoing,
-        whoseTurn: gameSetup.mode === GAME_MODE.singlePlayer ? side : BATTLEFIELD_SIDES.player,
+        whoseTurn:
+          gameSetup.mode === GAME_MODE.singlePlayer
+            ? side
+            : BATTLEFIELD_SIDES.player,
         player: {
           ...gameSetup.player,
           stage: GAME_STAGES.ongoing,
@@ -219,7 +226,7 @@ export default function Game() {
     // on revive opponent action
     socket.on('user_planning_action_emit', (incomingGameState) => {
       const currentGameState = gameSetupRef.current;
-      const { role, ...rest } = incomingGameState;
+      const { role, name, ...rest } = incomingGameState;
       setGameSetup({
         ...currentGameState,
         stage: incomingGameState.stage,
@@ -308,14 +315,7 @@ export default function Game() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center">
-      <h1 className="mb-4 text-xl font-extrabold text-gray-900 dark:text-white text-center">
-        <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
-          Battle Ships
-        </span>{' '}
-        multiplayer
-      </h1>
-
+    <div className="flex flex-1 flex-col items-center w-full">
       {[GAME_STAGES.planning].includes(gameSetup.stage) ? (
         <div className="w-full flex justify-around items-center flex-1 flex-col lg:flex-row lg:items-start">
           <BattlefieldPlanning
