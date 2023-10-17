@@ -44,11 +44,7 @@ export default function Battlefield({
   }
 
   useEffect(() => {
-    if (!isClickAllowed) {
-      return;
-    }
-
-    if (!isPc) {
+    if (!isPc || isClickAllowed) {
       return;
     }
 
@@ -84,7 +80,7 @@ export default function Battlefield({
   }, [gameState[enemySide].combatLog]);
 
   useEffect(() => {
-    if (!battlefield.fleet.length || isPc) {
+    if (!battlefield.fleet.length || isPc || battlefield.name !== gameState.role) {
       return;
     }
 
@@ -106,6 +102,7 @@ export default function Battlefield({
     if (isPc) {
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [battlefield.fleet, isPc]);
 
   const handleBattlefieldClick = (e) => {

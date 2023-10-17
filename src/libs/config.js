@@ -62,7 +62,7 @@ export const SHIP_DETAILS = [
 ];
 
 export const COLOR_SCHEMA = {
-  hover: 'bg-slate-400',
+  hover: 'bg-violet-200',
   // placed: 'bg-neutral-900',
   placed: 'dark:bg-gray-700 bg-neutral-900',
   damage: 'bg-orange-600',
@@ -77,8 +77,8 @@ export const GAME_MODE = {
 
 export const ROW_NAMES = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
-export const CELL_WIDTH = 'w-10';
-export const CELL_HEIGHT = 'h-10';
+export const CELL_WIDTH = 'w-12';
+export const CELL_HEIGHT = 'h-12';
 
 export const ROWS_AMOUNT = 7;
 export const COLUMNS_AMOUNT = 7;
@@ -98,6 +98,11 @@ export const INITIAL_BATTLEFIELD_SETUP = {
 export const BATTLEFIELD_SIDES = {
   player: 'player',
   enemy: 'enemy',
+};
+
+export const BATTLEFIELD_NICKNAMES = {
+  player: 'Alliance',
+  enemy: 'Horde',
 };
 
 export const ENV_VARS = {
