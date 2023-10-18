@@ -1,5 +1,7 @@
+import { useWindowSize } from '@/hooks/useWindowSize';
 import {
   CELL_HEIGHT,
+  CELL_SIZE,
   CELL_WIDTH,
   COLUMNS_AMOUNT,
   ROWS_AMOUNT,
@@ -121,7 +123,7 @@ export const getRandomShotCoords = () => {
   return getVirtualCoords(randomColumnIndex, randomRowIndex);
 };
 
-export const buildTableContent = (side = '') => {
+export const buildTableContent = ({ side = '', isMobile = false } = {}) => {
   return (
     <>
       <thead>
@@ -131,8 +133,7 @@ export const buildTableContent = (side = '') => {
             .map((_, headIndex) => {
               return (
                 <th
-                  // className={`${CELL_WIDTH} ${CELL_HEIGHT} uppercase`}
-                  className={`w-10 h-10 uppercase`}
+                  className={`${isMobile ? CELL_SIZE.mobile : CELL_SIZE.desktop} uppercase`}
                   key={`table-head-${headIndex}`}
                 >
                   {headIndex || ''}
@@ -154,7 +155,7 @@ export const buildTableContent = (side = '') => {
                       return (
                         <th
                           key={`table-data-${innerIndex}`}
-                          className={`${CELL_WIDTH} ${CELL_HEIGHT} uppercase`}
+                          className={`${isMobile ? CELL_SIZE.mobile : CELL_SIZE.desktop} uppercase`}
                         >
                           {ROW_NAMES[index]}
                         </th>
@@ -163,7 +164,7 @@ export const buildTableContent = (side = '') => {
                     return (
                       <td
                         key={`table-data-${innerIndex}`}
-                        className={`${CELL_WIDTH} ${CELL_HEIGHT} text-center border-solid border-2 border-violet-50	 rounded relative hover:bg-sky-700 cursor-pointer`}
+                        className={`${isMobile ? CELL_SIZE.mobile : CELL_SIZE.desktop} text-center border-solid border-2 border-violet-50	 rounded relative hover:bg-sky-700 cursor-pointer`}
                         data-index={innerIndex}
                         data-side={side}
                         data-row={index + 1}

@@ -77,6 +77,11 @@ export const GAME_MODE = {
 
 export const ROW_NAMES = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
+export const CELL_SIZE = {
+  desktop: 'w-12 h-12',
+  mobile: 'w-8 h-8',
+};
+
 export const CELL_WIDTH = 'w-12';
 export const CELL_HEIGHT = 'h-12';
 

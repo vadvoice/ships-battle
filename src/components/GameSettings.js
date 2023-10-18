@@ -149,7 +149,7 @@ export default function GameSettings({
       <h4 className="text-2xl font-bold dark:text-white text-center">
         {GAME_STAGE_MAP[gameSetup.stage]} Stage
       </h4>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         <div className="flex items-center">
           <PlayerAvatar player={gameSetup.player} />
           {BATTLEFIELD_NICKNAMES.player}

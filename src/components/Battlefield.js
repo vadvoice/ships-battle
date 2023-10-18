@@ -12,6 +12,7 @@ import Image from 'next/image';
 import TargetImage from '../../public/target.png';
 
 import React, { useRef, useState, useEffect } from 'react';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 export default function Battlefield({
   isPc,
@@ -21,6 +22,7 @@ export default function Battlefield({
   actions: { onShot },
 }) {
   // TODO: confusing naming and values too
+  const { isMobile } = useWindowSize();
   const isClickAllowed = gameState.whoseTurn === gameState.role;
   const battlefieldTable = useRef();
   const initialBattlefieldSetup = isEnemy ? gameState.enemy : gameState.player;
@@ -195,9 +197,10 @@ export default function Battlefield({
             alt="Picture of the author"
           />
         ) : null}
-        {buildTableContent(
-          isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy
-        )}
+        {buildTableContent({
+          side: isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy,
+          isMobile,
+        })}
       </table>
     </div>
   );

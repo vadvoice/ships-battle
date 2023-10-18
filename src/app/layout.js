@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         </header>
         {/* TODO: the ond style colors maybe looks better */}
         {/* <div className="flex flex-1 flex-col items-center p-2 pt-16 min-h-screen min-w-min md:px-10 bg-gradient-to-r from-blue-600 to-red-600"> */}
-        <div className="flex flex-1 flex-col items-center p-2 pt-16 min-h-screen min-w-min md:px-10 bg-gradient-to-b from-blue-600 via-cyan-950 to-red-600 md:bg-gradient-to-r text-slate-50">
+        <div className="flex flex-1 flex-col items-center p-2 pt-20 min-h-screen min-w-min md:px-10 bg-gradient-to-b from-blue-600 via-cyan-950 to-red-600 md:bg-gradient-to-r text-slate-50">
           {children}
         </div>
       </body>

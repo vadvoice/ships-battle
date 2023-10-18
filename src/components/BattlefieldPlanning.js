@@ -14,6 +14,7 @@ import {
   isShipPlacementValid,
 } from '@/libs/helpers';
 import BattlefieldSettings from './BattlefieldSettings';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 export default function BattlefieldPlanning({
   actions: { onChange },
@@ -21,6 +22,7 @@ export default function BattlefieldPlanning({
   socket,
   isPc = false,
 }) {
+  const { isMobile } = useWindowSize();
   const [battlefield, setBattlefield] = useState({
     name: isPc ? 'PC' : gameState.role,
     ...INITIAL_BATTLEFIELD_SETUP,
@@ -221,7 +223,7 @@ export default function BattlefieldPlanning({
         onMouseMove={onMouseEnterBattlefield}
         onMouseLeave={() => resetBattleFieldOngoingProcess()}
       >
-        {buildTableContent()}
+        {buildTableContent({ isMobile })}
       </table>
 
       {!isPc ? (

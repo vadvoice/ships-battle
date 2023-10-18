@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <nav className="absolute z-10 flex justify-between items-center px-4 py-2 w-screen bg-white dark:bg-gray-900">
+    <nav className="absolute z-10 flex justify-between items-center px-4 md:py-2 py-1 w-screen bg-white dark:bg-gray-900">
       <h1 className="text-xl font-extrabold text-gray-900 dark:text-white text-center">
         <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
           Battle Ships
