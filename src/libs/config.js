@@ -82,6 +82,11 @@ export const CELL_SIZE = {
   mobile: 'w-8 h-8',
 };
 
+export const TARGET_POSITION = {
+  desktop: { top: '88px', left: '42px' },
+  mobile: { top: '70px', left: '28px' },
+};
+
 export const CELL_WIDTH = 'w-12';
 export const CELL_HEIGHT = 'h-12';
 
@@ -111,5 +116,6 @@ export const BATTLEFIELD_NICKNAMES = {
 };
 
 export const ENV_VARS = {
-  socketPath: process.env.SOCKET_MULTIPLAYER_PATH || '/api/multiplayer_connection',
+  socketPath:
+    process.env.SOCKET_MULTIPLAYER_PATH || '/api/multiplayer_connection',
 };

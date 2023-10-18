@@ -2,6 +2,7 @@ import {
   BATTLEFIELD_SIDES,
   COLOR_SCHEMA,
   MAX_AMOUNT_OF_SHOTS,
+  TARGET_POSITION,
 } from '@/libs/config';
 import {
   buildTableContent,
@@ -51,8 +52,17 @@ export default function Battlefield({
     }
   };
 
+  const onTouchEnd = () => {
+    const cells = battlefieldTable.current.querySelectorAll('td');
+    cells.forEach((el) => el.classList.remove(COLOR_SCHEMA.hover));
+  };
+
   useEffect(() => {
-    if (!isPc || isClickAllowed) {
+    if (!isPc) {
+      return;
+    }
+
+    if (gameState.whoseTurn !== BATTLEFIELD_SIDES.enemy) {
       return;
     }
 
@@ -70,7 +80,7 @@ export default function Battlefield({
       onShot({ shot: randomCoords, isPc });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isClickAllowed]);
+  }, [isClickAllowed, gameState.whoseTurn]);
 
   // once compat log is changed, we need to highlight the last shot on the enemy battlefield
   useEffect(() => {
@@ -124,6 +134,7 @@ export default function Battlefield({
     if (e.target.tagName !== 'TD') {
       return;
     }
+
     // allow click only on users turn
     if (!isClickAllowed) {
       return;
@@ -176,27 +187,25 @@ export default function Battlefield({
 
   return (
     <div className="relative">
-      <h4 className="text-2xl font-bold dark:text-white text-center my-2">
+      <h4 className="md:text-2xl text-1xl font-bold dark:text-white text-center mt-2 mb-1">
         {isEnemy ? 'Horde' : 'Alliance'}
       </h4>
+      {enemySide === gameState.whoseTurn && isClickAllowed ? (
+        <Image
+          className={`absolute w-11/12 opacity-30 animate-pulse`}
+          style={isMobile ? TARGET_POSITION.mobile : TARGET_POSITION.desktop}
+          src={TargetImage}
+          alt="Picture of the author"
+        />
+      ) : null}
       <table
         ref={battlefieldTable}
         className={`relative m-0 border-spacing-0.5 border-separate`}
         onClick={handleBattlefieldClick}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
+        onTouchEnd={onTouchEnd}
       >
-        {enemySide === gameState.whoseTurn && isClickAllowed ? (
-          <Image
-            className={`absolute w-11/12 opacity-30 animate-pulse`}
-            style={{
-              top: '34px',
-              left: '40px',
-            }}
-            src={TargetImage}
-            alt="Picture of the author"
-          />
-        ) : null}
         {buildTableContent({
           side: isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy,
           isMobile,
