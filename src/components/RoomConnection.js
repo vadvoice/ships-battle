@@ -6,7 +6,7 @@ import Spinner from './Spinner';
 export default function RoomConnection({
   gameState,
   socket,
-  actions: { createRoom, onJoinRoom },
+  actions: { createRoom, onJoinRoom, onReset },
 }) {
   const params = useSearchParams();
   const { roomName } = gameState;
@@ -15,6 +15,13 @@ export default function RoomConnection({
     roomName: null,
     socket,
   });
+  const isRoomCreatetionStage =
+    gameState.stage === GAME_STAGES.connection &&
+    socket &&
+    !roomNameParam &&
+    !roomName;
+  const isInvitationStage = roomName;
+  const isRoomJoiningStage = socket && roomNameParam;
 
   const onCreateRoom = (e) => {
     e.preventDefault();
@@ -29,29 +36,27 @@ export default function RoomConnection({
     return <Spinner />;
   }
 
-  if (roomName) {
-    return (
-      <div className="flex items-center flex-col">
-        <button
-          className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-          onClick={() => {
-            navigator.clipboard.writeText(
-              window.location.origin +
-                `/?roomName=${roomName}&stage=${GAME_STAGES.connection}&mode=${GAME_MODE.multiPlayer}&role=${BATTLEFIELD_SIDES.enemy}`
-            );
-          }}
-        >
-          Copy Link <Spinner />
-        </button>
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center">
+      {isInvitationStage && (
+        <div className="flex items-center flex-col">
+          <button
+            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+            onClick={() => {
+              navigator.clipboard.writeText(
+                window.location.origin +
+                  `/?roomName=${roomName}&stage=${GAME_STAGES.connection}&mode=${GAME_MODE.multiPlayer}&role=${BATTLEFIELD_SIDES.enemy}`
+              );
+            }}
+          >
+            Copy Link <Spinner />
+          </button>
 
-        <p className="text-indigo-200">Send this invitation to the friend</p>
-      </div>
-    );
-  }
+          <p className="text-indigo-200">Send this invitation to the friend</p>
+        </div>
+      )}
 
-  if (gameState.stage === GAME_STAGES.connection && socket && !roomNameParam) {
-    return (
-      <div>
+      {isRoomCreatetionStage ? (
         <form onSubmit={onCreateRoom} className="flex flex-col items-center">
           <h3 className="my-2">What name would you give this fight?</h3>
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white ">
@@ -71,26 +76,31 @@ export default function RoomConnection({
             Create Room
           </button>
         </form>
-      </div>
-    );
-  }
+      ) : null}
 
-  return (
-    <div className="flex flex-col items-center">
-      <h4 className="text-2xl font-bold dark:text-white my-3">
-        Someone creates fight called:
-        <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 ml-3">
-          {roomNameParam}
-        </span>
-      </h4>
+      {isRoomJoiningStage ? (
+        <>
+          <h4 className="text-2xl font-bold text-white my-3 text-center">
+            Someone creates fight called:
+            <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 ml-3">
+              {roomNameParam}
+            </span>
+          </h4>
+          <button
+            data-tooltip-target="tooltip-default"
+            type="button"
+            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+            onClick={() => onJoinRoom(roomNameParam)}
+          >
+            Join the fight <Spinner />
+          </button>
+        </>
+      ) : null}
+
       <button
-        data-tooltip-target="tooltip-default"
-        type="button"
-        className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-        onClick={() => onJoinRoom(roomNameParam)}
-      >
-        Join the fight
-      </button>
+        className="mt-10 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded justify-self-end"
+        onClick={onReset}
+      >Go back</button>
     </div>
   );
 }

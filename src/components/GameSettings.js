@@ -10,17 +10,22 @@ import {
 import Spinner from './Spinner';
 
 const Divider = () => {
-  return <hr class="w-8 h-8 mx-2 mx-auto my-8 bg-gray-200 border-0 rounded md:my-12 dark:bg-gray-700"></hr>
-}
+  return (
+    <hr className="w-8 h-8 mx-2 mx-auto bg-gray-200 border-0 rounded dark:bg-gray-700"></hr>
+  );
+};
 
 export default function GameSettings({
   actions: { onReset, onGameModeChange },
   gameSetup,
 }) {
   const isMenuState = gameSetup.stage === GAME_STAGES.menu;
+  const isConnectionState = gameSetup.stage === GAME_STAGES.connection;
+  const isGamePlanning = gameSetup.stage === GAME_STAGES.planning;
   const isGameOngoing = gameSetup.stage === GAME_STAGES.ongoing;
   const isGameOver = gameSetup.stage === GAME_STAGES.gameover;
   const whoseTurn = gameSetup.whoseTurn;
+  console.log('isMenuState', isMenuState);
 
   // TODO: player personalization
   const PlayerAvatar = ({ player }) => {
@@ -68,10 +73,14 @@ export default function GameSettings({
     );
   };
 
-  if (isMenuState) {
-    return (
-      <div className="flex justify-between p-2 mt-5 flex-col">
-        <div className="flex">
+  if (isConnectionState) {
+    return <></>;
+  }
+
+  return (
+    <div className="flex justify-center p-2 flex-col">
+      {isMenuState ? (
+        <div className="flex justify-center items-center h-screen">
           <button
             onClick={() => onGameModeChange(GAME_MODE.singlePlayer)}
             className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
@@ -87,36 +96,83 @@ export default function GameSettings({
             2 Player
           </button>
         </div>
-      </div>
-    );
-  }
+      ) : null}
 
-  if (isGameOngoing) {
-    return (
-      <div className="flex justify-center p-2 flex-col">
-        <h4 className="text-2xl font-bold dark:text-white text-center">
-          {GAME_STAGE_MAP[gameSetup.stage]}
-        </h4>
-        <div className="flex items-center text-blue-700 border-y-2 border-fuchsia-50 justify-center text-fuchsia-50">
-          {/* TODO: shoul I use translate.json???? */}
-          <p className="text-sm text-center mr-2">Shots made:</p>
-          <span className="text-md font-bold">{gameSetup.shotsAmount}</span>
-        </div>
-        <div className="flex mt-3">
-          <div className={`relative flex items-center mx-3`}>
-            {whoseTurn === BATTLEFIELD_SIDES.player ? <div className="absolute z-10"><Spinner /></div> : null}
-            <PlayerAvatar player={gameSetup.player} />
-            <h5 className="font-bold dark:text-white text-center">Alliance</h5>
+      {isGamePlanning ? (
+        <>
+          <h4 className="text-2xl font-bold dark:text-white text-center">
+            {GAME_STAGE_MAP[gameSetup.stage]} Stage
+          </h4>
+          <div className="flex flex-col md:flex-row">
+            <div className="flex items-center">
+              <PlayerAvatar player={gameSetup.player} />
+              {BATTLEFIELD_NICKNAMES.player}
+              <StatusBadge stage={gameSetup.player.stage} />
+            </div>
+
+            <Divider />
+
+            <div className="flex items-center">
+              <PlayerAvatar player={gameSetup.enemy} />
+              {BATTLEFIELD_NICKNAMES.enemy}
+              <StatusBadge stage={gameSetup.enemy.stage} />
+            </div>
           </div>
-
-          <Divider />
-
-          <div className={`relative flex items-center mx-3`}>
-            {whoseTurn === BATTLEFIELD_SIDES.enemy ? <div className="absolute z-10"><Spinner /></div> : null}
-            <PlayerAvatar player={gameSetup.enemy} />
-            <h5 className="font-bold dark:text-white text-center">Horde</h5>
+          <div className="actions flex self-center mt-2">
+            <button
+              onClick={onReset}
+              className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+            >
+              Quit
+            </button>
           </div>
-        </div>
+        </>
+      ) : null}
+
+      {isGameOngoing ? (
+        <>
+          <div className="flex items-center text-blue-700 border-y-2 border-fuchsia-50 justify-center text-fuchsia-50">
+            {/* TODO: shoul I use translate.json???? */}
+            <p className="text-sm text-center mr-2">Shots made:</p>
+            <span className="text-md font-bold">{gameSetup.shotsAmount}</span>
+          </div>
+          <div className="flex mt-3 items-center">
+            <div className={`relative flex items-center mx-3`}>
+              {whoseTurn === BATTLEFIELD_SIDES.player ? (
+                <div className="absolute z-10">
+                  <Spinner />
+                </div>
+              ) : null}
+              <PlayerAvatar player={gameSetup.player} />
+              <h5 className="font-bold dark:text-white text-center">
+                Alliance
+              </h5>
+            </div>
+
+            <Divider />
+
+            <div className={`relative flex items-center mx-3`}>
+              {whoseTurn === BATTLEFIELD_SIDES.enemy ? (
+                <div className="absolute z-10">
+                  <Spinner />
+                </div>
+              ) : null}
+              <PlayerAvatar player={gameSetup.enemy} />
+              <h5 className="font-bold dark:text-white text-center">Horde</h5>
+            </div>
+          </div>
+          <div className="actions flex self-center mt-2">
+            <button
+              onClick={onReset}
+              className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+            >
+              Quit
+            </button>
+          </div>
+        </>
+      ) : null}
+
+      {isGameOver && (
         <div className="actions flex self-center mt-2">
           <button
             onClick={onReset}
@@ -125,53 +181,7 @@ export default function GameSettings({
             Quit
           </button>
         </div>
-      </div>
-    );
-  }
-
-  if (isGameOver) {
-    return (
-      <div className="flex justify-center flex-col items-center relative">
-        <div className="actions flex self-center mt-2">
-          <button
-            onClick={onReset}
-            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-          >
-            Quit
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex justify-center p-2 flex-col">
-      <h4 className="text-2xl font-bold dark:text-white text-center">
-        {GAME_STAGE_MAP[gameSetup.stage]} Stage
-      </h4>
-      <div className="flex">
-        <div className="flex items-center">
-          <PlayerAvatar player={gameSetup.player} />
-          {BATTLEFIELD_NICKNAMES.player}
-          <StatusBadge stage={gameSetup.player.stage} />
-        </div>
-
-        <Divider />
-
-        <div className="flex items-center">
-          <PlayerAvatar player={gameSetup.enemy} />
-          {BATTLEFIELD_NICKNAMES.enemy}
-          <StatusBadge stage={gameSetup.enemy.stage} />
-        </div>
-      </div>
-      <div className="actions flex self-center mt-2">
-        <button
-          onClick={onReset}
-          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-        >
-          Quit
-        </button>
-      </div>
+      )}
     </div>
   );
 }

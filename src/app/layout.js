@@ -12,11 +12,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning={true}>
+      <body className={`${inter.className} overflow-hidden`} suppressHydrationWarning={true}>
         <header>
           <Navbar />
         </header>
-        <div className="flex flex-1 flex-col items-center p-2 pt-16 min-h-screen min-w-min md:px-10 bg-gradient-to-r to-blue-600 from-red-600">
+        <div className="flex flex-1 flex-col items-center min-h-screen min-w-min text-slate-50">
           {children}
         </div>
       </body>

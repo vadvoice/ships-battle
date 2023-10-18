@@ -276,16 +276,6 @@ export default function Game() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameSetup.mode]);
 
-  if (isConnectionStage) {
-    return (
-      <RoomConnection
-        socket={socket}
-        gameState={gameSetup}
-        actions={{ createRoom, onJoinRoom }}
-      />
-    );
-  }
-
   if (isGameOverStage) {
     return (
       <div className="relative w-full flex justify-center flex-1 h-screen flex-col">
@@ -315,9 +305,27 @@ export default function Game() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center w-full">
+    <div
+      className={`flex flex-1 flex-col items-center w-full pt-20 md:p-0 ${
+        [
+          GAME_STAGES.menu,
+          GAME_STAGES.connection,
+          GAME_STAGES.planning,
+        ].includes(gameSetup.stage)
+          ? 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 to-indigo-500'
+          : 'bg-gradient-to-b from-blue-600 via-cyan-950 to-red-600 md:bg-gradient-to-r'
+      }`}
+    >
+      {isConnectionStage && (
+        <RoomConnection
+          socket={socket}
+          gameState={gameSetup}
+          actions={{ createRoom, onJoinRoom, onReset }}
+        />
+      )}
+
       {[GAME_STAGES.planning].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around items-center flex-1 flex-col lg:flex-row lg:items-start">
+        <div className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col">
           <BattlefieldPlanning
             socket={socket}
             actions={{ onChange: setGameSetup }}

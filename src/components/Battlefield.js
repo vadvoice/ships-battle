@@ -1,11 +1,19 @@
-import { BATTLEFIELD_SIDES, COLOR_SCHEMA, MAX_AMOUNT_OF_SHOTS } from '@/libs/config';
+import {
+  BATTLEFIELD_SIDES,
+  COLOR_SCHEMA,
+  MAX_AMOUNT_OF_SHOTS,
+  TARGET_POSITION,
+} from '@/libs/config';
 import {
   buildTableContent,
   getRandomShotCoords,
   getVirtualCoords,
 } from '@/libs/helpers';
+import Image from 'next/image';
+import TargetImage from '../../public/target.png';
 
 import React, { useRef, useState, useEffect } from 'react';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 export default function Battlefield({
   isPc,
@@ -15,13 +23,14 @@ export default function Battlefield({
   actions: { onShot },
 }) {
   // TODO: confusing naming and values too
+  const { isMobile } = useWindowSize();
   const isClickAllowed = gameState.whoseTurn === gameState.role;
   const battlefieldTable = useRef();
-  const initialBattlefieldSetup = isEnemy
-    ? gameState.enemy
-    : gameState.player;
-  const [battlefield,] = useState(initialBattlefieldSetup);
-  const enemySide = isPlayer ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player;
+  const initialBattlefieldSetup = isEnemy ? gameState.enemy : gameState.player;
+  const [battlefield] = useState(initialBattlefieldSetup);
+  const enemySide = isPlayer
+    ? BATTLEFIELD_SIDES.enemy
+    : BATTLEFIELD_SIDES.player;
   let activeCell = null;
 
   const onMouseMove = (e) => {
@@ -41,10 +50,19 @@ export default function Battlefield({
       activeCell.classList.remove(COLOR_SCHEMA.hover);
       activeCell = null;
     }
-  }
+  };
+
+  const onTouchEnd = () => {
+    const cells = battlefieldTable.current.querySelectorAll('td');
+    cells.forEach((el) => el.classList.remove(COLOR_SCHEMA.hover));
+  };
 
   useEffect(() => {
-    if (!isPc || isClickAllowed) {
+    if (!isPc) {
+      return;
+    }
+
+    if (gameState.whoseTurn !== BATTLEFIELD_SIDES.enemy) {
       return;
     }
 
@@ -52,7 +70,9 @@ export default function Battlefield({
     // do attempts until PC get a valid shot
     while (!isShotValid) {
       const randomCoords = getRandomShotCoords();
-      if (gameState[enemySide].combatLog.some((el) => el.raw === randomCoords.raw)) {
+      if (
+        gameState[enemySide].combatLog.some((el) => el.raw === randomCoords.raw)
+      ) {
         continue;
       }
       isShotValid = true;
@@ -60,8 +80,8 @@ export default function Battlefield({
       onShot({ shot: randomCoords, isPc });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isClickAllowed]);
- 
+  }, [isClickAllowed, gameState.whoseTurn]);
+
   // once compat log is changed, we need to highlight the last shot on the enemy battlefield
   useEffect(() => {
     if (!gameState[enemySide].combatLog.length) {
@@ -72,7 +92,8 @@ export default function Battlefield({
       return;
     }
 
-    const shot = gameState[enemySide].combatLog[gameState[enemySide].combatLog.length - 1];
+    const shot =
+      gameState[enemySide].combatLog[gameState[enemySide].combatLog.length - 1];
     if (shot) {
       hightlightCombatLog(shot);
     }
@@ -80,7 +101,11 @@ export default function Battlefield({
   }, [gameState[enemySide].combatLog]);
 
   useEffect(() => {
-    if (!battlefield.fleet.length || isPc || battlefield.name !== gameState.role) {
+    if (
+      !battlefield.fleet.length ||
+      isPc ||
+      battlefield.name !== gameState.role
+    ) {
       return;
     }
 
@@ -109,6 +134,7 @@ export default function Battlefield({
     if (e.target.tagName !== 'TD') {
       return;
     }
+
     // allow click only on users turn
     if (!isClickAllowed) {
       return;
@@ -116,7 +142,7 @@ export default function Battlefield({
 
     // avoid click on oun battlefield
     if (e.target.dataset.side === gameState.role) {
-      return; 
+      return;
     }
 
     const coords = getVirtualCoords(
@@ -160,19 +186,30 @@ export default function Battlefield({
   };
 
   return (
-    <div>
-      <h4 className="text-2xl font-bold dark:text-white text-center my-2">
+    <div className="relative">
+      <h4 className="md:text-2xl text-1xl font-bold dark:text-white text-center mt-2 mb-1">
         {isEnemy ? 'Horde' : 'Alliance'}
       </h4>
-
+      {enemySide === gameState.whoseTurn && isClickAllowed ? (
+        <Image
+          className={`absolute w-11/12 opacity-30 animate-pulse`}
+          style={isMobile ? TARGET_POSITION.mobile : TARGET_POSITION.desktop}
+          src={TargetImage}
+          alt="Picture of the author"
+        />
+      ) : null}
       <table
         ref={battlefieldTable}
-        className={`m-0 border-spacing-0.5 border-separate`}
+        className={`relative m-0 border-spacing-0.5 border-separate`}
         onClick={handleBattlefieldClick}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
+        onTouchEnd={onTouchEnd}
       >
-        {buildTableContent(isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy)}
+        {buildTableContent({
+          side: isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy,
+          isMobile,
+        })}
       </table>
     </div>
   );
