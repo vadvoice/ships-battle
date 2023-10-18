@@ -317,7 +317,7 @@ export default function Game() {
   return (
     <div className="flex flex-1 flex-col items-center w-full">
       {[GAME_STAGES.planning].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around items-center flex-1 flex-col lg:flex-row lg:items-start">
+        <div className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col">
           <BattlefieldPlanning
             socket={socket}
             actions={{ onChange: setGameSetup }}

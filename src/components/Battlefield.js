@@ -1,9 +1,15 @@
-import { BATTLEFIELD_SIDES, COLOR_SCHEMA, MAX_AMOUNT_OF_SHOTS } from '@/libs/config';
+import {
+  BATTLEFIELD_SIDES,
+  COLOR_SCHEMA,
+  MAX_AMOUNT_OF_SHOTS,
+} from '@/libs/config';
 import {
   buildTableContent,
   getRandomShotCoords,
   getVirtualCoords,
 } from '@/libs/helpers';
+import Image from 'next/image';
+import TargetImage from '../../public/target.png';
 
 import React, { useRef, useState, useEffect } from 'react';
 
@@ -17,11 +23,11 @@ export default function Battlefield({
   // TODO: confusing naming and values too
   const isClickAllowed = gameState.whoseTurn === gameState.role;
   const battlefieldTable = useRef();
-  const initialBattlefieldSetup = isEnemy
-    ? gameState.enemy
-    : gameState.player;
-  const [battlefield,] = useState(initialBattlefieldSetup);
-  const enemySide = isPlayer ? BATTLEFIELD_SIDES.enemy : BATTLEFIELD_SIDES.player;
+  const initialBattlefieldSetup = isEnemy ? gameState.enemy : gameState.player;
+  const [battlefield] = useState(initialBattlefieldSetup);
+  const enemySide = isPlayer
+    ? BATTLEFIELD_SIDES.enemy
+    : BATTLEFIELD_SIDES.player;
   let activeCell = null;
 
   const onMouseMove = (e) => {
@@ -41,7 +47,7 @@ export default function Battlefield({
       activeCell.classList.remove(COLOR_SCHEMA.hover);
       activeCell = null;
     }
-  }
+  };
 
   useEffect(() => {
     if (!isPc || isClickAllowed) {
@@ -52,7 +58,9 @@ export default function Battlefield({
     // do attempts until PC get a valid shot
     while (!isShotValid) {
       const randomCoords = getRandomShotCoords();
-      if (gameState[enemySide].combatLog.some((el) => el.raw === randomCoords.raw)) {
+      if (
+        gameState[enemySide].combatLog.some((el) => el.raw === randomCoords.raw)
+      ) {
         continue;
       }
       isShotValid = true;
@@ -61,7 +69,7 @@ export default function Battlefield({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isClickAllowed]);
- 
+
   // once compat log is changed, we need to highlight the last shot on the enemy battlefield
   useEffect(() => {
     if (!gameState[enemySide].combatLog.length) {
@@ -72,7 +80,8 @@ export default function Battlefield({
       return;
     }
 
-    const shot = gameState[enemySide].combatLog[gameState[enemySide].combatLog.length - 1];
+    const shot =
+      gameState[enemySide].combatLog[gameState[enemySide].combatLog.length - 1];
     if (shot) {
       hightlightCombatLog(shot);
     }
@@ -80,7 +89,11 @@ export default function Battlefield({
   }, [gameState[enemySide].combatLog]);
 
   useEffect(() => {
-    if (!battlefield.fleet.length || isPc || battlefield.name !== gameState.role) {
+    if (
+      !battlefield.fleet.length ||
+      isPc ||
+      battlefield.name !== gameState.role
+    ) {
       return;
     }
 
@@ -116,7 +129,7 @@ export default function Battlefield({
 
     // avoid click on oun battlefield
     if (e.target.dataset.side === gameState.role) {
-      return; 
+      return;
     }
 
     const coords = getVirtualCoords(
@@ -160,19 +173,31 @@ export default function Battlefield({
   };
 
   return (
-    <div>
+    <div className="relative">
       <h4 className="text-2xl font-bold dark:text-white text-center my-2">
         {isEnemy ? 'Horde' : 'Alliance'}
       </h4>
-
       <table
         ref={battlefieldTable}
-        className={`m-0 border-spacing-0.5 border-separate`}
+        className={`relative m-0 border-spacing-0.5 border-separate`}
         onClick={handleBattlefieldClick}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
       >
-        {buildTableContent(isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy)}
+        {enemySide === gameState.whoseTurn && isClickAllowed ? (
+          <Image
+            className={`absolute w-11/12 opacity-30 animate-pulse`}
+            style={{
+              top: '34px',
+              left: '40px',
+            }}
+            src={TargetImage}
+            alt="Picture of the author"
+          />
+        ) : null}
+        {buildTableContent(
+          isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy
+        )}
       </table>
     </div>
   );
