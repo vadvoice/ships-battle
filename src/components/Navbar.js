@@ -10,10 +10,17 @@ export default function HeaderNavbar() {
     e.preventDefault();
     e.stopPropagation();
     onResetUserState();
-  }
+  };
+
+  const customTheme = {
+    base: 'sticky top-0 z-[60] border-b border-gray-200 dark:border-gray-700 flex items-center justify-between w-full mx-auto py-2.5 px-4',
+    inner: {
+      base: 'mx-auto flex flex-wrap justify-between items-center w-full bg-slate-700',
+    },
+  };
 
   return (
-    <Navbar fluid={true} rounded={true}>
+    <Navbar fluid={true} theme={{ theme: customTheme }}>
       <Navbar.Brand href="/">
         <h1 className="text-xl font-extrabold text-gray-900 dark:text-white text-center">
           <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
