@@ -24,6 +24,7 @@ export default function BattlefieldPlanning({
 }) {
   const initialBattlefieldSetup = {
     name: isPc ? 'PC' : gameState.name,
+    role: isPc ? BATTLEFIELD_SIDES.enemy : gameState.role,
     ...INITIAL_BATTLEFIELD_SETUP,
   }
   const { isMobile } = useWindowSize();

@@ -1,15 +1,6 @@
 import { BATTLEFIELD_SIDES } from '@/libs/config';
-import { getShootingAccuracy } from '@/libs/helpers';
 
-export const Stats = ({ gameState }) => {
-  const playerShootingAccuracy = getShootingAccuracy(
-    gameState.player.combatLog.length,
-    gameState.player.combatLog.filter((el) => el.isDamaged).length
-  );
-  const enemyShootingAccuracy = getShootingAccuracy(
-    gameState.enemy.combatLog.length,
-    gameState.enemy.combatLog.filter((el) => el.isDamaged).length
-  );
+export const SummaryTable = ({ gameState }) => {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg px-5 w-screen">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -44,7 +35,7 @@ export const Stats = ({ gameState }) => {
             <td className="px-6 py-4">
               {gameState.player.combatLog.filter((el) => el.isDamaged).length}
             </td>
-            <td className="px-6 py-4">{playerShootingAccuracy}%</td>
+            <td className="px-6 py-4">{gameState.player.accuracy}%</td>
             <td className="px-6 py-4">
               {gameState.winner === BATTLEFIELD_SIDES.player ? '✅' : '❌'}
             </td>
@@ -60,7 +51,7 @@ export const Stats = ({ gameState }) => {
             <td className="px-6 py-4">
               {gameState.enemy.combatLog.filter((el) => el.isDamaged).length}
             </td>
-            <td className="px-6 py-4">{enemyShootingAccuracy}%</td>
+            <td className="px-6 py-4">{gameState.enemy.accuracy}%</td>
             <td className="px-6 py-4">
               {gameState.winner === BATTLEFIELD_SIDES.enemy ? '✅' : '❌'}
             </td>

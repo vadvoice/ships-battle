@@ -8,11 +8,13 @@ export default function Navbar() {
 
   return (
     <nav className="absolute z-10 flex justify-between items-center px-4 md:py-2 py-1 w-screen bg-white dark:bg-gray-900">
-      <h1 className="text-xl font-extrabold text-gray-900 dark:text-white text-center">
-        <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
-          Battle Ships
-        </span>{' '}
-      </h1>
+      <Link href="/">
+        <h1 className="text-xl font-extrabold text-gray-900 dark:text-white text-center">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+            Battle Ships
+          </span>{' '}
+        </h1>
+      </Link>
 
       <ul className="font-medium flex p-4 md:p-0 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
         <Link

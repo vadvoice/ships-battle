@@ -11,10 +11,10 @@ import {
   ENV_VARS,
   BATTLEFIELD_NICKNAMES,
 } from '@/libs/config';
-import { getRandomBetween } from '@/libs/helpers';
+import { getRandomBetween, getShootingAccuracy } from '@/libs/helpers';
 import { useEffect, useRef, useState } from 'react';
 import ConfettiGenerator from 'confetti-js';
-import { Stats } from '@/components/Stats';
+import { SummaryTable } from '@/components/SummaryTable';
 import SocketIO from 'socket.io-client';
 import RoomConnection from '@/components/RoomConnection';
 import { useSearchParams } from 'next/navigation';
@@ -30,12 +30,14 @@ export default function Game() {
   const initialGameSetupState = {
     stage: stageParam ? Number(stageParam) : GAME_STAGES.menu,
     player: {
-      name: BATTLEFIELD_SIDES.player,
       ...INITIAL_BATTLEFIELD_SETUP,
+      role: BATTLEFIELD_SIDES.player,
+      name: BATTLEFIELD_SIDES.player,
     },
     enemy: {
-      name: BATTLEFIELD_SIDES.enemy,
       ...INITIAL_BATTLEFIELD_SETUP,
+      name: BATTLEFIELD_SIDES.enemy,
+      role: BATTLEFIELD_SIDES.enemy,
     },
     role: roleParam || BATTLEFIELD_SIDES.player,
     name: roleParam
@@ -135,10 +137,19 @@ export default function Game() {
       [whoseTurn]: {
         ...gameSetup[whoseTurn],
         combatLog: [...gameSetup[whoseTurn].combatLog, shot],
+        accuracy: getShootingAccuracy(
+          gameSetup[whoseTurn].combatLog.length + 1,
+          gameSetup[whoseTurn].combatLog.filter((el) => el.isDamaged).length +
+            (shot.isDamaged ? 1 : 0)
+        ),
       },
       [oppenentSide]: {
         ...gameSetup[oppenentSide],
         fleet: oppenentFleet,
+        accuracy: getShootingAccuracy(
+          gameSetup[oppenentSide].combatLog.length,
+          gameSetup[oppenentSide].combatLog.filter((el) => el.isDamaged).length
+        ),
       },
       whoseTurn: oppenentSide,
       stage: isGameOver ? GAME_STAGES.gameover : GAME_STAGES.ongoing,
@@ -146,6 +157,22 @@ export default function Game() {
     };
     setGameSetup(nextGameState);
     socket && socket.emit('user_send_battle_action', nextGameState);
+
+    if (isGameOver) {
+      // TODO: move to services
+      fetch('/api/stats', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          winner: whoseTurn,
+          accuracy: nextGameState[whoseTurn].accuracy,
+          shots: nextGameState[whoseTurn].combatLog.length,
+          nickname: nextGameState[whoseTurn].name,
+        }),
+      });
+    }
   };
 
   const createRoom = async (roomName) => {
@@ -310,7 +337,7 @@ export default function Game() {
           wins!
         </h2>
 
-        <Stats gameState={gameSetup} />
+        <SummaryTable gameState={gameSetup} />
 
         <GameSettings
           gameSetup={gameSetup}

@@ -104,7 +104,7 @@ export default function Battlefield({
     if (
       !battlefield.fleet.length ||
       isPc ||
-      battlefield.name !== gameState.role
+      battlefield.role !== gameState.role
     ) {
       return;
     }
