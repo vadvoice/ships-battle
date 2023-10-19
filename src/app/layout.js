@@ -7,13 +7,23 @@ const inter = Inter({ subsets: ['latin'] });
 
 // open graph meta tags
 export const metadata = {
-  title: 'Battleship',
-  description: 'Ships battle like a table game but in your browser',
-  siteUrl: 'https://ships-battle.vercel.app/',
-  image: 'https://ships-battle.vercel.app/battleship.png',
-  type: 'website',
-  keyworkds: 'battleship, game, ships, table game',
-  locale: 'en_US',
+  openGraph: {
+    title: 'Battleship',
+    description: 'Ships battle like a table game but in your browser',
+    siteUrl: 'https://ships-battle.vercel.app/',
+    url: 'https://ships-battle.vercel.app/',
+    type: 'website',
+    keyworkds: 'battleship, game, ships, table game',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://ships-battle.vercel.app/battleship.png',
+        width: 1200,
+        height: 630,
+        alt: 'Battleship',
+      },
+    ],
+  },
   twitter: {
     card: 'Ships battle like a table game but in your browser',
     title: 'BattleShip',
