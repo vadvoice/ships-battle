@@ -22,11 +22,13 @@ export default function BattlefieldPlanning({
   socket,
   isPc = false,
 }) {
-  const { isMobile } = useWindowSize();
-  const [battlefield, setBattlefield] = useState({
-    name: isPc ? 'PC' : gameState.role,
+  const initialBattlefieldSetup = {
+    name: isPc ? 'PC' : gameState.name,
+    role: isPc ? BATTLEFIELD_SIDES.enemy : gameState.role,
     ...INITIAL_BATTLEFIELD_SETUP,
-  });
+  }
+  const { isMobile } = useWindowSize();
+  const [battlefield, setBattlefield] = useState(initialBattlefieldSetup);
   const battlefieldTable = useRef();
   const isPlanningStage = battlefield.stage === GAME_STAGES.planning;
 
@@ -115,10 +117,7 @@ export default function BattlefieldPlanning({
   };
 
   const resetFleet = () => {
-    setBattlefield({
-      name: isPc ? 'PC' : gameState.role,
-      ...INITIAL_BATTLEFIELD_SETUP,
-    });
+    setBattlefield(initialBattlefieldSetup);
     const cells = battlefieldTable.current.querySelectorAll('td');
 
     SHIP_DETAILS.map((el) => el.color).forEach((color) => {

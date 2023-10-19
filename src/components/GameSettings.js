@@ -25,7 +25,6 @@ export default function GameSettings({
   const isGameOngoing = gameSetup.stage === GAME_STAGES.ongoing;
   const isGameOver = gameSetup.stage === GAME_STAGES.gameover;
   const whoseTurn = gameSetup.whoseTurn;
-  console.log('isMenuState', isMenuState);
 
   // TODO: player personalization
   const PlayerAvatar = ({ player }) => {
@@ -106,7 +105,7 @@ export default function GameSettings({
           <div className="flex flex-col md:flex-row">
             <div className="flex items-center">
               <PlayerAvatar player={gameSetup.player} />
-              {BATTLEFIELD_NICKNAMES.player}
+              {gameSetup.player.name || BATTLEFIELD_NICKNAMES.player}
               <StatusBadge stage={gameSetup.player.stage} />
             </div>
 
@@ -114,7 +113,7 @@ export default function GameSettings({
 
             <div className="flex items-center">
               <PlayerAvatar player={gameSetup.enemy} />
-              {BATTLEFIELD_NICKNAMES.enemy}
+              {gameSetup.enemy.name || BATTLEFIELD_NICKNAMES.enemy}
               <StatusBadge stage={gameSetup.enemy.stage} />
             </div>
           </div>
@@ -145,7 +144,7 @@ export default function GameSettings({
               ) : null}
               <PlayerAvatar player={gameSetup.player} />
               <h5 className="font-bold dark:text-white text-center">
-                Alliance
+                {gameSetup.player.name || BATTLEFIELD_NICKNAMES.player}
               </h5>
             </div>
 
@@ -158,7 +157,9 @@ export default function GameSettings({
                 </div>
               ) : null}
               <PlayerAvatar player={gameSetup.enemy} />
-              <h5 className="font-bold dark:text-white text-center">Horde</h5>
+              <h5 className="font-bold dark:text-white text-center">
+                {gameSetup.enemy.name || BATTLEFIELD_NICKNAMES.enemy}
+              </h5>
             </div>
           </div>
           <div className="actions flex self-center mt-2">
@@ -173,7 +174,7 @@ export default function GameSettings({
       ) : null}
 
       {isGameOver && (
-        <div className="actions flex self-center mt-2">
+        <div className="relative actions flex self-center mt-2">
           <button
             onClick={onReset}
             className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"

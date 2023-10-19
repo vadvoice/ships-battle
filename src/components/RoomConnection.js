@@ -32,12 +32,10 @@ export default function RoomConnection({
     setConnectionState({ roomName: e.target.value });
   };
 
-  if (!socket) {
-    return <Spinner />;
-  }
-
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
+      {!socket && (<Spinner />)}
+
       {isInvitationStage && (
         <div className="flex items-center flex-col">
           <button
