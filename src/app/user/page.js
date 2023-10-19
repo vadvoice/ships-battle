@@ -63,10 +63,10 @@ export default function User() {
   // }, []);
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="flex flex-1 justify-center items-center bg-[conic-gradient(at_top,_var(--tw-gradient-stops))] from-gray-900 via-gray-400 to-gray-900">
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          <label className="block mb-2 text-bold font-medium">
             Nickname
             <input
               name="nickname"

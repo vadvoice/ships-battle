@@ -12,7 +12,7 @@ export default function BattlefieldSettings({
 
   if (isPlanningStage) {
     return (
-      <div className="flex justify-center p-2 flex-col mt-5">
+      <div className="flex flex-1 justify-center p-2 flex-col mt-5">
         <h4 className="text-xl text-center font-bold dark:text-white">Actions:</h4>
 
         <div className="flex justify-between">

@@ -77,9 +77,9 @@ export default function GameSettings({
   }
 
   return (
-    <div className="flex justify-center p-2 flex-col">
+    <div className="flex justify-center p-2 flex-col flex-1">
       {isMenuState ? (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex justify-center items-center">
           <button
             onClick={() => onGameModeChange(GAME_MODE.singlePlayer)}
             className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"

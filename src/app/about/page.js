@@ -20,7 +20,7 @@ export default function About() {
   }, []);
 
   return (
-    <div className="h-screen pt-20 flex flex-col justify-around items-center bg-[conic-gradient(at_left,_var(--tw-gradient-stops))] from-rose-900 via-amber-800 to-rose-400">
+    <div className="flex flex-1 flex-col justify-around items-center bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900">
       {/* about description */}
       <div className="flex flex-col justify-center items-center px-4">
         <h1 className="text-2xl font-bold dark:text-white text-center">
