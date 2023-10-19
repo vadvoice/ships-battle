@@ -188,7 +188,7 @@ export default function Battlefield({
   return (
     <div className="relative">
       <h4 className="md:text-2xl text-1xl font-bold dark:text-white text-center mt-2 mb-1">
-        {isEnemy ? 'Horde' : 'Alliance'}
+        {isEnemy ? gameState.enemy.name : gameState.player.name}
       </h4>
       {enemySide === gameState.whoseTurn && isClickAllowed ? (
         <Image

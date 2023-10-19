@@ -18,12 +18,14 @@ import { Stats } from '@/components/Stats';
 import SocketIO from 'socket.io-client';
 import RoomConnection from '@/components/RoomConnection';
 import { useSearchParams } from 'next/navigation';
+import { useUser } from '@/hooks/useUser';
 
 export default function Game() {
   const params = useSearchParams();
   const stageParam = params.get('stage');
   const gameModeParam = params.get('mode');
   const roleParam = params.get('role');
+  const { user } = useUser();
 
   const initialGameSetupState = {
     stage: stageParam ? Number(stageParam) : GAME_STAGES.menu,
@@ -146,56 +148,6 @@ export default function Game() {
     socket && socket.emit('user_send_battle_action', nextGameState);
   };
 
-  // NOTE: hack to set the current game setup to ref avoiding set state hook
-  // because socket.io ignores the component’s lifecycle methods and sees only the first render of the game state
-  // SOURCE: https://medium.com/@kishorkrishna/cant-access-latest-state-inside-socket-io-listener-heres-how-to-fix-it-1522a5abebdb
-  useEffect(() => {
-    gameSetupRef.current = gameSetup;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameSetup]);
-
-  // wait for both players to be ready to start the game
-  useEffect(() => {
-    if (
-      gameSetup.stage !== GAME_STAGES.ongoing &&
-      gameSetup.player.stage === GAME_STAGES.ready &&
-      gameSetup.enemy.stage === GAME_STAGES.ready
-    ) {
-      // get random side between player and enemy
-      // could be added as separate stage
-      const side = Object.keys(BATTLEFIELD_SIDES)[getRandomBetween(0, 1)];
-      const nextGameState = {
-        ...gameSetup,
-        stage: GAME_STAGES.ongoing,
-        whoseTurn:
-          gameSetup.mode === GAME_MODE.singlePlayer
-            ? side
-            : BATTLEFIELD_SIDES.player,
-        player: {
-          ...gameSetup.player,
-          stage: GAME_STAGES.ongoing,
-        },
-        enemy: {
-          ...gameSetup.enemy,
-          stage: GAME_STAGES.ongoing,
-        },
-      };
-      setGameSetup(nextGameState);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameSetup]);
-
-  useEffect(() => {
-    if (!isGameOverStage) {
-      return;
-    }
-    const confettiSettings = { target: 'congrats' };
-    const confetti = new ConfettiGenerator(confettiSettings);
-    confetti.render();
-
-    return () => confetti.clear();
-  }, [isGameOverStage]);
-
   const createRoom = async (roomName) => {
     if (!socket) {
       return;
@@ -261,6 +213,71 @@ export default function Game() {
     return socket;
   };
 
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    setGameSetup({
+      ...gameSetup,
+      name: user.nickname,
+      [gameSetup.role]: {
+        ...gameSetup[gameSetup.role],
+        name: user.nickname,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, gameSetup.stage]);
+
+  // NOTE: hack to set the current game setup to ref avoiding set state hook
+  // because socket.io ignores the component’s lifecycle methods and sees only the first render of the game state
+  // SOURCE: https://medium.com/@kishorkrishna/cant-access-latest-state-inside-socket-io-listener-heres-how-to-fix-it-1522a5abebdb
+  useEffect(() => {
+    gameSetupRef.current = gameSetup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameSetup]);
+
+  // wait for both players to be ready to start the game
+  useEffect(() => {
+    if (
+      gameSetup.stage !== GAME_STAGES.ongoing &&
+      gameSetup.player.stage === GAME_STAGES.ready &&
+      gameSetup.enemy.stage === GAME_STAGES.ready
+    ) {
+      // get random side between player and enemy
+      // could be added as separate stage
+      const side = Object.keys(BATTLEFIELD_SIDES)[getRandomBetween(0, 1)];
+      const nextGameState = {
+        ...gameSetup,
+        stage: GAME_STAGES.ongoing,
+        whoseTurn:
+          gameSetup.mode === GAME_MODE.singlePlayer
+            ? side
+            : BATTLEFIELD_SIDES.player,
+        player: {
+          ...gameSetup.player,
+          stage: GAME_STAGES.ongoing,
+        },
+        enemy: {
+          ...gameSetup.enemy,
+          stage: GAME_STAGES.ongoing,
+        },
+      };
+      setGameSetup(nextGameState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameSetup]);
+
+  useEffect(() => {
+    if (!isGameOverStage) {
+      return;
+    }
+    const confettiSettings = { target: 'congrats' };
+    const confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
+
+    return () => confetti.clear();
+  }, [isGameOverStage]);
+
   // initialize socket once multiplaer mode selected
   useEffect(() => {
     const isConnectionHaveToEstablished =
@@ -279,15 +296,18 @@ export default function Game() {
 
   if (isGameOverStage) {
     return (
-      <div className="relative w-full flex justify-center flex-1 h-screen flex-col">
+      <div className="relative flex flex-1 flex-col items-center w-full pt-20">
         {/* background confetti */}
         <canvas
           className="inset-x-0 h-screen w-screen absolute"
           id="congrats"
         ></canvas>
 
-        <h2 className="text-2xl font-bold dark:text-white text-center uppercase">
-          {gameSetup.winner} wins!
+        <h2 className="mt-4 mb-2 text-2xl font-bold dark:text-white text-center uppercase">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+            {gameSetup.name}{' '}
+          </span>
+          wins!
         </h2>
 
         <Stats gameState={gameSetup} />
