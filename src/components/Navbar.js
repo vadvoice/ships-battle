@@ -6,6 +6,12 @@ import { useUser } from '@/hooks/useUser';
 export default function HeaderNavbar() {
   const { user, onResetUserState } = useUser();
 
+  const onLogout = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onResetUserState();
+  }
+
   return (
     <Navbar fluid={true} rounded={true}>
       <Navbar.Brand href="/">
@@ -41,7 +47,7 @@ export default function HeaderNavbar() {
               </span>
               <button
                 className="ml-2 bg-red-500 hover:bg-red-400 text-white font-bold px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-                onClick={onResetUserState}
+                onClick={onLogout}
               >
                 Logout
               </button>

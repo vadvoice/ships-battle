@@ -324,10 +324,13 @@ export default function Game() {
 
   if (isGameOverStage) {
     return (
-      <div className="relative flex flex-1 flex-col items-center w-full pt-20">
+      <div className="flex flex-col items-center w-full flex-1 overflow-hidden">
         {/* background confetti */}
         <canvas
-          className="inset-x-0 h-screen w-screen absolute"
+          className="inset-x-0 flex-1 w-screen absolute"
+          style={{
+            maxHeight: '-webkit-fill-available',
+          }}
           id="congrats"
         ></canvas>
 
@@ -355,7 +358,7 @@ export default function Game() {
 
   return (
     <div
-      className={`flex flex-1 flex-col items-center w-full pt-20 md:p-0 ${
+      className={`flex flex-col items-center w-full flex-1 ${
         [
           GAME_STAGES.menu,
           GAME_STAGES.connection,
