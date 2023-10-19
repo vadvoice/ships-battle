@@ -170,6 +170,7 @@ export default function Game() {
           accuracy: nextGameState[whoseTurn].accuracy,
           shots: nextGameState[whoseTurn].combatLog.length,
           nickname: nextGameState[whoseTurn].name,
+          role: nextGameState[whoseTurn].role,
         }),
       });
     }

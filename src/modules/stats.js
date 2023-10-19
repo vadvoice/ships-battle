@@ -6,6 +6,7 @@ const statsSchema = new Schema(
     accuracy: Number,
     shots: Number,
     nickname: String,
+    role: String,
   },
   { timestamps: true }
 );
