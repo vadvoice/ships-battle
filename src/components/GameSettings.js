@@ -25,7 +25,6 @@ export default function GameSettings({
   const isGameOngoing = gameSetup.stage === GAME_STAGES.ongoing;
   const isGameOver = gameSetup.stage === GAME_STAGES.gameover;
   const whoseTurn = gameSetup.whoseTurn;
-  console.log('isMenuState', isMenuState);
 
   // TODO: player personalization
   const PlayerAvatar = ({ player }) => {

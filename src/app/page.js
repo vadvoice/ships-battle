@@ -83,11 +83,12 @@ export default function Game() {
     ) {
       return;
     }
-
     setGameSetup({
       ...initialGameSetupState,
       stage: GAME_STAGES.menu,
     });
+
+    socket && socket.disconnect();
   };
 
   const onShot = ({ shot }) => {
@@ -254,7 +255,7 @@ export default function Game() {
 
     socket.on('user_disconnected', (msg) => {
       console.log('opponent disconnected', msg);
-      setGameSetup(initialGameSetupState);
+      onReset();
     });
 
     return socket;
