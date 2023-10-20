@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import './globals.css';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
+import Spinner from '@/components/Spinner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -43,12 +44,18 @@ export default function RootLayout({ children }) {
       >
         <Toaster closeButton />
         <header>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Navbar />
-          </Suspense>
+          <Navbar />
         </header>
         <div className="flex flex-1 flex-col min-w-min text-slate-50">
-          {children}
+          <Suspense
+            fallback={
+              <div className="flex flex-1 justify-center items-center">
+                <Spinner />
+              </div>
+            }
+          >
+            {children}
+          </Suspense>
         </div>
       </body>
     </html>

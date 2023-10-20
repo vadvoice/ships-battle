@@ -3,25 +3,25 @@ import { Server } from 'socket.io';
 
 const onSocketConnection = async (io, socket) => {
   socket.on('user_send_planning_action', (gameState) => {
-    socket.to(Array.from(socket.rooms).pop()).emit('user_planning_action_emit', gameState);
+    socket.to(Array.from(socket.rooms).pop()).emit('user_action_planning_change', gameState);
   });
 
   socket.on('user_send_battle_action', (gameState) => {
-    socket.to(Array.from(socket.rooms).pop()).emit('user_battle_action_emit', gameState);
+    socket.to(Array.from(socket.rooms).pop()).emit('user_action_combat_log', gameState);
   });
 
-  socket.on('join_room', async (roomName) => {
+  socket.on('room_connection_request', async (roomName) => {
     await socket.join(roomName);
     console.log(`user with id ${socket.id} joined room - ${roomName}`);
     const clients = await io.in(roomName).fetchSockets();
     if (clients.length >= 2) {
-      io.sockets.in(roomName).emit('connection_successful', 'go!');
+      io.sockets.in(roomName).emit('room_user_connected', 'go!');
     }
   });
 
   socket.on('disconnecting', () => {
     socket.rooms.forEach((room) => {
-      socket.to(room).emit('user_disconnected', { id: socket.id, room });
+      socket.to(room).emit('room_user_disconnected', { id: socket.id, room });
     });
   });
 
@@ -32,7 +32,6 @@ const onSocketConnection = async (io, socket) => {
 
 export default function handler(req, res) {
   if (res.socket.server.io) {
-    console.log('Server already started!');
     res.end();
     return;
   }

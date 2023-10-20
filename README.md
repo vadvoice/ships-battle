@@ -1,3 +1,16 @@
+# Ship Battle Board Game
+
+This is a Next.js project that implements a two-player board game called Ship Battle. The game is played on a grid where each player places their ships and takes turns firing at their opponent's ships. The game is won by the player who sinks all of their opponent's ships first.
+
+### [Ships Battle Demo](https://ships-battle.vercel.app/)
+
+
+## Tech side
+The project uses `create-next-app` to bootstrap the application and `socket.io` to enable real-time communication between players. The game can be played in both single-player and two-player modes.
+
+## Getting Started
+
+To run the development server, use the following command:
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
