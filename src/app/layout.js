@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import Navbar from '../components/Navbar';
 import './globals.css';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
         className={`${inter.className} flex flex-col min-h-screen overflow-x-hidden`}
         suppressHydrationWarning={true}
       >
+        <Toaster closeButton />
         <header>
           <Suspense fallback={<div>Loading...</div>}>
             <Navbar />

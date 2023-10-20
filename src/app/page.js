@@ -19,6 +19,7 @@ import SocketIO from 'socket.io-client';
 import RoomConnection from '@/components/RoomConnection';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
+import { toast } from 'sonner';
 
 export default function Game() {
   const params = useSearchParams();
@@ -176,7 +177,7 @@ export default function Game() {
     }
   };
 
-  const createRoom = async (roomName) => {
+  const onCreateRoom = async (roomName) => {
     if (!socket) {
       return;
     }
@@ -185,6 +186,7 @@ export default function Game() {
 
   const onJoinRoom = async (roomName) => {
     await socket.emit('join_room', roomName);
+    toast('Joined to the room!');
     setGameSetup({
       ...gameSetup,
       roomName,
@@ -197,10 +199,10 @@ export default function Game() {
 
     const socket = SocketIO(undefined, {
       path: ENV_VARS.socketPath,
+      reconnectionAttempts: 3,
     });
 
     socket.on('connect', (con) => {
-      console.log('Connected', socket.id);
       setSocket(socket);
     });
 
@@ -227,6 +229,7 @@ export default function Game() {
     });
 
     socket.on('connection_successful', (msg) => {
+      toast('Opponent connected');
       setGameSetup({
         ...gameSetup,
         stage: GAME_STAGES.planning,
@@ -234,8 +237,12 @@ export default function Game() {
     });
 
     socket.on('user_disconnected', (msg) => {
-      console.log('opponent disconnected', msg);
+      toast('Opponent disconnected');
       onReset();
+    });
+
+    socket.on('connect_error', (err) => {
+      toast.error('Something went wrong. Try again later');
     });
 
     return socket;
@@ -372,7 +379,7 @@ export default function Game() {
         <RoomConnection
           socket={socket}
           gameState={gameSetup}
-          actions={{ createRoom, onJoinRoom, onReset }}
+          actions={{ onCreateRoom, onJoinRoom, onReset }}
         />
       )}
 

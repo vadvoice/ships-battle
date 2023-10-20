@@ -2,11 +2,12 @@ import { BATTLEFIELD_SIDES, GAME_MODE, GAME_STAGES } from '@/libs/config';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import Spinner from './Spinner';
+import { toast } from 'sonner';
 
 export default function RoomConnection({
   gameState,
   socket,
-  actions: { createRoom, onJoinRoom, onReset },
+  actions: { onCreateRoom, onJoinRoom, onReset },
 }) {
   const params = useSearchParams();
   const { roomName } = gameState;
@@ -23,9 +24,9 @@ export default function RoomConnection({
   const isInvitationStage = roomName;
   const isRoomJoiningStage = socket && roomNameParam;
 
-  const onCreateRoom = (e) => {
+  const onSubmitRoom = (e) => {
     e.preventDefault();
-    createRoom(connectionState.roomName);
+    onCreateRoom(connectionState.roomName);
   };
 
   const onRoomNameChange = (e) => {
@@ -45,6 +46,7 @@ export default function RoomConnection({
                 window.location.origin +
                   `/?roomName=${roomName}&stage=${GAME_STAGES.connection}&mode=${GAME_MODE.multiPlayer}&role=${BATTLEFIELD_SIDES.enemy}`
               );
+              toast('Copied to clipboard');
             }}
           >
             Copy Link <Spinner />
@@ -55,7 +57,7 @@ export default function RoomConnection({
       )}
 
       {isRoomCreatetionStage ? (
-        <form onSubmit={onCreateRoom} className="flex flex-col items-center">
+        <form onSubmit={onSubmitRoom} className="flex flex-col items-center">
           <h3 className="my-2">What name would you give this fight?</h3>
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white ">
             <input
