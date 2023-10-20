@@ -185,7 +185,7 @@ export default function Game() {
   };
 
   const onJoinRoom = async (roomName) => {
-    await socket.emit('join_room', roomName);
+    await socket.emit('room_connection_request', roomName);
     toast('Joined to the room!');
     setGameSetup({
       ...gameSetup,
@@ -207,7 +207,7 @@ export default function Game() {
     });
 
     // on revive opponent action
-    socket.on('user_planning_action_emit', (incomingGameState) => {
+    socket.on('user_action_planning_change', (incomingGameState) => {
       const currentGameState = gameSetupRef.current;
       const { role, name, ...rest } = incomingGameState;
       setGameSetup({
@@ -218,8 +218,7 @@ export default function Game() {
       });
     });
 
-    // TODO: more creativity in naming
-    socket.on('user_battle_action_emit', (incomingGameState) => {
+    socket.on('user_action_combat_log', (incomingGameState) => {
       const currentGameState = gameSetupRef.current;
       const { role, ...rest } = incomingGameState;
       setGameSetup({
@@ -228,7 +227,7 @@ export default function Game() {
       });
     });
 
-    socket.on('connection_successful', (msg) => {
+    socket.on('room_user_connected', (msg) => {
       toast('Opponent connected');
       setGameSetup({
         ...gameSetup,
@@ -236,7 +235,7 @@ export default function Game() {
       });
     });
 
-    socket.on('user_disconnected', (msg) => {
+    socket.on('room_user_disconnected', (msg) => {
       toast('Opponent disconnected');
       onReset();
     });
