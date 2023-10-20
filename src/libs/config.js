@@ -19,38 +19,38 @@ export const GAME_STAGE_MAP = {
 };
 
 export const SHIP_DETAILS = [
-  // {
-  //   name: 'carrier',
-  //   length: 5,
-  //   amount: 1,
-  //   isDamaged: false,
-  //   color: 'bg-red-400',
-  //   isSunk: false,
-  // },
-  // {
-  //   name: 'battleship',
-  //   length: 4,
-  //   amount: 1,
-  //   isDamaged: false,
-  //   color: 'bg-blue-500',
-  //   isSunk: false,
-  // },
-  // {
-  //   name: 'cruiser',
-  //   length: 3,
-  //   amount: 1,
-  //   isDamaged: false,
-  //   color: 'bg-green-500',
-  //   isSunk: false,
-  // },
-  // {
-  //   name: 'destroyer',
-  //   length: 3,
-  //   amount: 1,
-  //   isDamaged: false,
-  //   color: 'bg-yellow-500',
-  //   isSunk: false,
-  // },
+  {
+    name: 'carrier',
+    length: 5,
+    amount: 1,
+    isDamaged: false,
+    color: 'bg-red-400',
+    isSunk: false,
+  },
+  {
+    name: 'battleship',
+    length: 4,
+    amount: 1,
+    isDamaged: false,
+    color: 'bg-blue-500',
+    isSunk: false,
+  },
+  {
+    name: 'cruiser',
+    length: 3,
+    amount: 1,
+    isDamaged: false,
+    color: 'bg-green-500',
+    isSunk: false,
+  },
+  {
+    name: 'destroyer',
+    length: 3,
+    amount: 1,
+    isDamaged: false,
+    color: 'bg-yellow-500',
+    isSunk: false,
+  },
   {
     name: 'frigate',
     length: 2,
@@ -63,7 +63,6 @@ export const SHIP_DETAILS = [
 
 export const COLOR_SCHEMA = {
   hover: 'bg-violet-200',
-  // placed: 'bg-neutral-900',
   placed: 'dark:bg-gray-700 bg-neutral-900',
   damage: 'bg-orange-600',
   empty: 'bg-teal-50',
@@ -103,8 +102,6 @@ export const INITIAL_BATTLEFIELD_SETUP = {
   fleet: [],
   stage: GAME_STAGES.planning,
   combatLog: [],
-  // role: '',
-  // name: '',
 };
 
 export const BATTLEFIELD_SIDES = {
