@@ -1,4 +1,8 @@
+import { BATTLEFIELD_SIDES } from '@/libs/config';
+import Image from 'next/image';
+
 export const StatsTable = ({ stats }) => {
+  // TODO: pagination
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg px-5 w-screen">
       <h1 className="mb-2 text-2xl font-extrabold text-gray-900 dark:text-white text-center">
@@ -31,7 +35,13 @@ export const StatsTable = ({ stats }) => {
               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               <td className="px-6 py-4">{stat.nickname}</td>
-              <td className="px-6 py-4">{stat.winner}</td>
+              <td className="px-6 py-4">
+                {stat.winner === BATTLEFIELD_SIDES.player ? (
+                  <Image src="/alliance.png" alt="alliance" width={50} height={50} />
+                ) : (
+                  <Image src="/horde.png" alt="horde" width={50} height={50} />
+                )}
+              </td>
               <td className="px-6 py-4">{stat.shots}</td>
               <td className="px-6 py-4">{stat.accuracy} %</td>
             </tr>
