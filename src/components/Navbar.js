@@ -8,9 +8,14 @@ import { useEffect, useState } from 'react';
 
 export default function HeaderNavbar() {
   const { user, onResetUserState } = useUser();
-  const initialThemeMode =
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let initialThemeMode = false;
+  if (typeof window !== 'undefined') {
+    // Client-side-only code
+    initialThemeMode =
+      window?.matchMedia &&
+      window?.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
   const [isDarkMode, setIsDarkMode] = useState(initialThemeMode);
 
   const onLogout = (e) => {
@@ -59,15 +64,15 @@ export default function HeaderNavbar() {
         <Navbar.Toggle />
         <Navbar.Collapse>
           <div className="flex items-center">
-            <Navbar.Link className="m-2" href="/about">
+            <Navbar.Link href="/about" className="border-0">
               About
             </Navbar.Link>
 
-            <div class="relative flex py-5 items-center">
-              <span class="flex-shrink mx-4 text-gray-400">|</span>
+            <div className="relative flex py-5 items-center">
+              <span className="flex-shrink mx-4 text-gray-400">|</span>
             </div>
 
-            <Navbar.Link href="/user">
+            <Navbar.Link href="/user" className="border-0">
               {user ? (
                 <div className="flex items-center">
                   {user.avatarUrl ? (
@@ -113,8 +118,8 @@ export default function HeaderNavbar() {
                 'Login'
               )}
             </Navbar.Link>
-            <div class="relative flex py-5 items-center">
-              <span class="flex-shrink mx-4 text-gray-400">|</span>
+            <div className="relative flex py-5 items-center">
+              <span className="flex-shrink mx-4 text-gray-400">|</span>
             </div>
             <DarkThemeToggle />
           </div>
