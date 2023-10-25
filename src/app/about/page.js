@@ -32,9 +32,7 @@ export default function About() {
           lengths placed on a grid. The goal is to sink the opponent`s fleet.
         </p>
       </div>
-      <StatsTable stats={stats} />
-      <br />
-      {isStatsLoading && <Spinner />}
+      {isStatsLoading ? <Spinner /> : <StatsTable stats={stats} />}
     </div>
   );
 }
