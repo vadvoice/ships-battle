@@ -97,6 +97,7 @@ export default function User() {
 
           {user.avatarUrl ? (
             <Image
+              className="rounded-full"
               width={100}
               height={100}
               src={user.avatarUrl || '/avatar.png'}
