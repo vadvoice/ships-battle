@@ -248,7 +248,7 @@ export default function Game() {
     });
 
     socket.on('room_user_connected', (msg) => {
-      toast('Opponent connected');
+      toast.success('Opponent connected');
       setGameSetup({
         ...gameSetup,
         stage: GAME_STAGES.planning,
@@ -256,7 +256,7 @@ export default function Game() {
     });
 
     socket.on('room_user_disconnected', (msg) => {
-      toast('Opponent disconnected');
+      toast.message('Opponent disconnected');
       onReset();
     });
 
