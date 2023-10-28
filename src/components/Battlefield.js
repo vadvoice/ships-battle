@@ -15,6 +15,7 @@ import TargetImage from '../../public/target.png';
 import React, { useRef, useState, useEffect } from 'react';
 import { useWindowSize } from '@/hooks/useWindowSize';
 import { CombatStats } from './CombatStats';
+import { motion } from 'framer-motion';
 
 export default function Battlefield({
   isPc,
@@ -59,27 +60,36 @@ export default function Battlefield({
   };
 
   useEffect(() => {
-    if (!isPc) {
-      return;
-    }
-
-    if (gameState.whoseTurn !== BATTLEFIELD_SIDES.enemy) {
-      return;
-    }
-
-    let isShotValid = false;
-    // do attempts until PC get a valid shot
-    while (!isShotValid) {
-      const randomCoords = getRandomShotCoords();
-      if (
-        gameState[enemySide].combatLog.some((el) => el.raw === randomCoords.raw)
-      ) {
-        continue;
+    async function makeShot() {
+      if (!isPc) {
+        return;
       }
-      isShotValid = true;
 
-      onShot({ shot: randomCoords, isPc });
+      if (gameState.whoseTurn !== BATTLEFIELD_SIDES.enemy) {
+        return;
+      }
+
+      let isShotValid = false;
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // do attempts until PC get a valid shot
+      while (!isShotValid) {
+        const randomCoords = getRandomShotCoords();
+        if (
+          gameState[enemySide].combatLog.some(
+            (el) => el.raw === randomCoords.raw
+          )
+        ) {
+          continue;
+        }
+        isShotValid = true;
+
+        onShot({ shot: randomCoords, isPc });
+      }
     }
+
+    makeShot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isClickAllowed, gameState.whoseTurn, isPc]);
 
@@ -192,12 +202,22 @@ export default function Battlefield({
         {isEnemy ? gameState.enemy.name : gameState.player.name}
       </h4>
       {enemySide === gameState.whoseTurn && isClickAllowed ? (
-        <Image
-          className={`absolute w-11/12 opacity-30 animate-pulse`}
-          style={isMobile ? TARGET_POSITION.mobile : TARGET_POSITION.desktop}
-          src={TargetImage}
-          alt="Picture of the author"
-        />
+        <motion.div
+          initial={{
+            scale: 0,
+          }}
+          animate={{
+            x: !isMobile ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.x,
+            y: !isMobile ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.y,
+            scale: 1,
+          }}
+        >
+          <Image
+            className={`absolute w-11/12 opacity-30 animate-pulse`}
+            src={TargetImage}
+            alt="Target"
+          />
+        </motion.div>
       ) : null}
       <table
         id={`table-battlefield-${isPlayer ? 'player' : 'enemy'}`}
