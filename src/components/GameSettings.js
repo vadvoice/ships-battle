@@ -8,12 +8,9 @@ import {
   GAME_STAGE_MAP,
 } from '@/libs/config';
 import Spinner from './Spinner';
-
-const Divider = () => {
-  return (
-    <hr className="w-8 h-8 mx-2 mx-auto bg-gray-200 border-0 rounded dark:bg-gray-700"></hr>
-  );
-};
+import { motion } from 'framer-motion';
+import { Button, Tooltip } from 'flowbite-react';
+import { Divider } from './Divider';
 
 export default function GameSettings({
   actions: { onReset, onGameModeChange },
@@ -51,7 +48,7 @@ export default function GameSettings({
 
     if (stage === GAME_STAGES.planningComplete) {
       return (
-        <span className="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+        <span className="bg-yellow-100 text-yellow-800 text-sm font-medium mx-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
           {stageLabel}
         </span>
       );
@@ -59,14 +56,14 @@ export default function GameSettings({
 
     if (stage === GAME_STAGES.ready) {
       return (
-        <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+        <span className="bg-green-100 text-green-800 text-sm font-medium mx-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
           {stageLabel}
         </span>
       );
     }
 
     return (
-      <span className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+      <span className="bg-blue-100 text-blue-800 text-sm font-medium mx-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
         {stageLabel}
       </span>
     );
@@ -79,21 +76,41 @@ export default function GameSettings({
   return (
     <div className="flex justify-center p-2 flex-col flex-1">
       {isMenuState ? (
-        <div className="flex justify-center items-center">
-          <button
-            onClick={() => onGameModeChange(GAME_MODE.singlePlayer)}
-            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        <div className="flex justify-between items-center">
+          <motion.div
+            initial={{ x: '-100vw' }}
+            animate={{ x: '0%' }}
+            whileHover={{ scale: 1.1 }}
           >
-            1 Player
-          </button>
+            <Button
+              onClick={() => onGameModeChange(GAME_MODE.singlePlayer)}
+              color="blue"
+            >
+              1 Player
+            </Button>
+          </motion.div>
 
-          <button
-            onClick={() => onGameModeChange(GAME_MODE.multiPlayer)}
-            className="flex items-center bg-violet-500 hover:bg-violet-400 text-white font-bold py-2 px-4 border-b-4 border-violet-700 hover:border-violet-500 rounded"
-            title="Coming soon"
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
           >
-            2 Player
-          </button>
+            <Divider />
+          </motion.div>
+
+          <Tooltip content="Beta version" >
+            <motion.div
+              initial={{ x: '100vw' }}
+              animate={{ x: '0%' }}
+              whileHover={{ scale: 1.1 }}
+            >
+              <Button
+                onClick={() => onGameModeChange(GAME_MODE.multiPlayer)}
+                color="warning"
+              >
+                2 Player
+              </Button>
+            </motion.div>
+          </Tooltip>
         </div>
       ) : null}
 
@@ -102,7 +119,7 @@ export default function GameSettings({
           <h4 className="text-2xl font-bold dark:text-white text-center">
             {GAME_STAGE_MAP[gameSetup.stage]} Stage
           </h4>
-          <div className="flex flex-col md:flex-row">
+          <div className="flex flex-col items-center md:flex-row">
             <div className="flex items-center">
               <PlayerAvatar player={gameSetup.player} />
               {gameSetup.player.name || BATTLEFIELD_NICKNAMES.player}
@@ -118,12 +135,11 @@ export default function GameSettings({
             </div>
           </div>
           <div className="actions flex self-center mt-2">
-            <button
-              onClick={onReset}
-              className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-            >
-              Quit
-            </button>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <Button color="failure" onClick={onReset}>
+                Quit
+              </Button>
+            </motion.div>
           </div>
         </>
       ) : null}
@@ -135,7 +151,7 @@ export default function GameSettings({
             <p className="text-sm text-center mr-2">Shots made:</p>
             <span className="text-md font-bold">{gameSetup.shotsAmount}</span>
           </div>
-          <div className="flex mt-3 items-center">
+          <div className="flex my-3 items-center">
             <div className={`relative flex items-center mx-3`}>
               {whoseTurn === BATTLEFIELD_SIDES.player ? (
                 <div className="absolute z-10">
@@ -163,24 +179,18 @@ export default function GameSettings({
             </div>
           </div>
           <div className="actions flex self-center mt-2">
-            <button
-              onClick={onReset}
-              className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-            >
+            <Button color="failure" onClick={onReset}>
               Quit
-            </button>
+            </Button>
           </div>
         </>
       ) : null}
 
       {isGameOver && (
         <div className="relative actions flex self-center mt-2">
-          <button
-            onClick={onReset}
-            className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-          >
+          <Button color="failure" onClick={onReset}>
             Quit
-          </button>
+          </Button>
         </div>
       )}
     </div>

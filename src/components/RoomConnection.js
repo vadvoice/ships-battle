@@ -3,12 +3,14 @@ import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import Spinner from './Spinner';
 import { toast } from 'sonner';
+import { Button,  } from 'flowbite-react';
 
 export default function RoomConnection({
   gameState,
   socket,
   actions: { onCreateRoom, onJoinRoom, onReset },
 }) {
+  const [isInvitationCopied, setIsInvitationCopied] = useState(false);
   const params = useSearchParams();
   const { roomName } = gameState;
   const roomNameParam = params.get('roomName');
@@ -35,23 +37,24 @@ export default function RoomConnection({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
-      {!socket && (<Spinner />)}
+      {!socket && <Spinner />}
 
       {isInvitationStage && (
         <div className="flex items-center flex-col">
-          <button
-            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+          <Button
+            color="blue"
             onClick={() => {
               navigator.clipboard.writeText(
                 window.location.origin +
                   `/?roomName=${roomName}&stage=${GAME_STAGES.connection}&mode=${GAME_MODE.multiPlayer}&role=${BATTLEFIELD_SIDES.enemy}`
               );
-              toast('Copied to clipboard');
+              setIsInvitationCopied(true);
+              toast.success('Copied to clipboard');
             }}
+            isProcessing={isInvitationCopied}
           >
-            Copy Link <Spinner />
-          </button>
-
+            Copy Link
+          </Button>
           <p className="text-indigo-200">Send this invitation to the friend</p>
         </div>
       )}
@@ -69,12 +72,10 @@ export default function RoomConnection({
               required
             ></input>
           </label>
-          <button
-            type="submit"
-            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-          >
+          <Button type="submit" color="blue">
+            {' '}
             Create Room
-          </button>
+          </Button>
         </form>
       ) : null}
 
@@ -86,21 +87,20 @@ export default function RoomConnection({
               {roomNameParam}
             </span>
           </h4>
-          <button
-            data-tooltip-target="tooltip-default"
+          <Button
             type="button"
-            className="flex items-center mr-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
             onClick={() => onJoinRoom(roomNameParam)}
+            isProcessing={true}
+            processingLabel="Press button to join the fight"
           >
-            Join the fight <Spinner />
-          </button>
+            Join the fight
+          </Button>
         </>
       ) : null}
 
-      <button
-        className="mt-10 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded justify-self-end"
-        onClick={onReset}
-      >Go back</button>
+      <Button className="mt-10" color="failure" onClick={onReset}>
+        Go back
+      </Button>
     </div>
   );
 }

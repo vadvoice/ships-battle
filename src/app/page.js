@@ -20,6 +20,7 @@ import RoomConnection from '@/components/RoomConnection';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 export default function Game() {
   const params = useSearchParams();
@@ -403,20 +404,24 @@ export default function Game() {
 
       {[GAME_STAGES.ongoing].includes(gameSetup.stage) ? (
         <div className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col">
-          <Battlefield
-            isPlayer
-            socket={socket}
-            gameState={gameSetup}
-            actions={{ onChange: setGameSetup, onShot }}
-          />
+          <motion.div initial={{ x: '-100vw' }} animate={{ x: '0%' }}>
+            <Battlefield
+              isPlayer
+              socket={socket}
+              gameState={gameSetup}
+              actions={{ onChange: setGameSetup, onShot }}
+            />
+          </motion.div>
 
-          <Battlefield
-            isEnemy
-            isPc={isPc}
-            socket={socket}
-            gameState={gameSetup}
-            actions={{ onChange: setGameSetup, onShot }}
-          />
+          <motion.div initial={{ x: '100vw' }} animate={{ x: '0%' }}>
+            <Battlefield
+              isEnemy
+              isPc={isPc}
+              socket={socket}
+              gameState={gameSetup}
+              actions={{ onChange: setGameSetup, onShot }}
+            />
+          </motion.div>
         </div>
       ) : null}
 
