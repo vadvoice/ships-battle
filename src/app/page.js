@@ -20,9 +20,10 @@ import RoomConnection from '@/components/RoomConnection';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { motion, useAnimate } from 'framer-motion';
 
 export default function Game() {
+  const [scope, animate] = useAnimate();
   const params = useSearchParams();
   const stageParam = params.get('stage');
   const gameModeParam = params.get('mode');
@@ -97,7 +98,7 @@ export default function Game() {
     socket && socket.disconnect();
   };
 
-  const onShot = ({ shot }) => {
+  const onShot = async ({ shot }) => {
     const whoseTurn = gameSetup.whoseTurn;
     shot.status = 'missed';
 
@@ -159,6 +160,24 @@ export default function Game() {
     };
     setGameSetup(nextGameState);
     socket && socket.emit('user_send_battle_action', nextGameState);
+
+    if (shot.status === 'hit') {
+      await animate(
+        `#table-battlefield-${oppenentSide}`,
+        { scale: 1.05 },
+        { duration: 0.1, ease: 'easeInOut' }
+      );
+      await animate(
+        `#table-battlefield-${oppenentSide}`,
+        { scale: 0.95 },
+        { duration: 0.1, ease: 'easeInOut' }
+      );
+      await animate(
+        `#table-battlefield-${oppenentSide}`,
+        { scale: 1 },
+        { duration: 0.1, ease: 'easeInOut' }
+      );
+    }
 
     if (isGameOver) {
       // TODO: move to services
@@ -403,7 +422,10 @@ export default function Game() {
       ) : null}
 
       {[GAME_STAGES.ongoing].includes(gameSetup.stage) ? (
-        <div className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col">
+        <div
+          className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col"
+          ref={scope}
+        >
           <motion.div initial={{ x: '-100vw' }} animate={{ x: '0%' }}>
             <Battlefield
               isPlayer

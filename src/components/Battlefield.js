@@ -199,6 +199,7 @@ export default function Battlefield({
         />
       ) : null}
       <table
+        id={`table-battlefield-${isPlayer ? 'player' : 'enemy'}`}
         ref={battlefieldTable}
         className={`relative m-0 border-spacing-0.5 border-separate`}
         onClick={handleBattlefieldClick}
