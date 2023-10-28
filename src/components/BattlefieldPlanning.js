@@ -3,7 +3,6 @@ import {
   BATTLEFIELD_SIDES,
   COLOR_SCHEMA,
   GAME_STAGES,
-  GAME_STAGE_MAP,
   INITIAL_BATTLEFIELD_SETUP,
   SHIP_DETAILS,
 } from '@/libs/config';
@@ -15,6 +14,7 @@ import {
 } from '@/libs/helpers';
 import BattlefieldSettings from './BattlefieldSettings';
 import { useWindowSize } from '@/hooks/useWindowSize';
+import { motion } from 'framer-motion';
 
 export default function BattlefieldPlanning({
   actions: { onChange },
@@ -26,7 +26,7 @@ export default function BattlefieldPlanning({
     name: isPc ? 'PC' : gameState.name,
     role: isPc ? BATTLEFIELD_SIDES.enemy : gameState.role,
     ...INITIAL_BATTLEFIELD_SETUP,
-  }
+  };
   const { isMobile } = useWindowSize();
   const [battlefield, setBattlefield] = useState(initialBattlefieldSetup);
   const battlefieldTable = useRef();
@@ -214,15 +214,17 @@ export default function BattlefieldPlanning({
         {isPc ? 'PC' : gameState.name}
       </h4>
 
-      <table
-        ref={battlefieldTable}
-        className={`m-0 border-spacing-0.5 border-separate`}
-        onClick={handleBattlefieldClick}
-        onMouseMove={onMouseEnterBattlefield}
-        onMouseLeave={() => resetBattleFieldOngoingProcess()}
-      >
-        {buildTableContent({ isMobile })}
-      </table>
+      <motion.div initial={{ y: '100%' }} animate={{ y: '0' }}>
+        <table
+          ref={battlefieldTable}
+          className={`m-0 border-spacing-0.5 border-separate`}
+          onClick={handleBattlefieldClick}
+          onMouseMove={onMouseEnterBattlefield}
+          onMouseLeave={() => resetBattleFieldOngoingProcess()}
+        >
+          {buildTableContent({ isMobile })}
+        </table>
+      </motion.div>
 
       {!isPc ? (
         <BattlefieldSettings

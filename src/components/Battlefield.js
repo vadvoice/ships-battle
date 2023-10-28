@@ -80,7 +80,7 @@ export default function Battlefield({
       onShot({ shot: randomCoords, isPc });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isClickAllowed, gameState.whoseTurn]);
+  }, [isClickAllowed, gameState.whoseTurn, isPc]);
 
   // once compat log is changed, we need to highlight the last shot on the enemy battlefield
   useEffect(() => {

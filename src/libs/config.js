@@ -82,8 +82,8 @@ export const CELL_SIZE = {
 };
 
 export const TARGET_POSITION = {
-  desktop: { top: '88px', left: '42px' },
-  mobile: { top: '70px', left: '28px' },
+  desktop: { top: '80px', left: '40px' },
+  mobile: { top: '56px', left: '28px' },
 };
 
 export const CELL_WIDTH = 'w-12';
