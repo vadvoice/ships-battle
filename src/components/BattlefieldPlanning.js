@@ -14,7 +14,7 @@ import {
 } from '@/libs/helpers';
 import BattlefieldSettings from './BattlefieldSettings';
 import { useWindowSize } from '@/hooks/useWindowSize';
-import { motion } from 'framer-motion';
+import { motion, useAnimate } from 'framer-motion';
 
 export default function BattlefieldPlanning({
   actions: { onChange },
@@ -22,6 +22,7 @@ export default function BattlefieldPlanning({
   socket,
   isPc = false,
 }) {
+  const [scope, animate] = useAnimate();
   const initialBattlefieldSetup = {
     name: isPc ? 'PC' : gameState.name,
     role: isPc ? BATTLEFIELD_SIDES.enemy : gameState.role,
@@ -134,8 +135,12 @@ export default function BattlefieldPlanning({
     });
   };
 
-  const genericFleet = () => {
+  const genericFleet = async () => {
     const fleet = getGenericFleet(battlefield);
+
+    // TODO: should i move it to the helpers or some sort of animation sets?
+    await animate('table', { y: 0 }, { duration: 0.1, ease: 'easeInOut' });
+    await animate('table', { y: 10, rotate: Math.round(Math.random()) ? 10 : -10, scale: 0.95 }, { duration: 0.3, ease: 'easeInOut' });
 
     setBattlefield({
       ...battlefield,
@@ -144,6 +149,7 @@ export default function BattlefieldPlanning({
       currentShipIndex: battlefield.shipDetails.length,
       fleet,
     });
+    await animate('table', { y: 0,  rotate: 0, scale: 1 }, { duration: 0.1, ease: 'easeOut' });
   };
 
   const autoGenerate = () => {
@@ -209,12 +215,22 @@ export default function BattlefieldPlanning({
   }, [battlefield.fleet, isPc]);
 
   return (
-    <div className={`${isPc ? 'hidden' : ''} flex flex-col items-center`}>
+    <div
+      className={`${isPc ? 'hidden' : ''} flex flex-col items-center`}
+      ref={scope}
+    >
       <h4 className="text-2xl font-bold dark:text-white text-center my-2">
         {isPc ? 'PC' : gameState.name}
       </h4>
 
-      <motion.div initial={{ y: '100%' }} animate={{ y: '0' }}>
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: '0' }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1 },
+        }}
+      >
         <table
           ref={battlefieldTable}
           className={`m-0 border-spacing-0.5 border-separate`}

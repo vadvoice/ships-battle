@@ -90,14 +90,11 @@ export default function GameSettings({
             </Button>
           </motion.div>
 
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-          >
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
             <Divider />
           </motion.div>
 
-          <Tooltip content="Beta version" >
+          <Tooltip content="Beta version">
             <motion.div
               initial={{ x: '100vw' }}
               animate={{ x: '0%' }}
@@ -179,9 +176,11 @@ export default function GameSettings({
             </div>
           </div>
           <div className="actions flex self-center mt-2">
-            <Button color="failure" onClick={onReset}>
-              Quit
-            </Button>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <Button color="failure" onClick={onReset}>
+                Quit
+              </Button>
+            </motion.div>
           </div>
         </>
       ) : null}

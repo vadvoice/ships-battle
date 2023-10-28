@@ -14,6 +14,7 @@ import TargetImage from '../../public/target.png';
 
 import React, { useRef, useState, useEffect } from 'react';
 import { useWindowSize } from '@/hooks/useWindowSize';
+import { CombatStats } from './CombatStats';
 
 export default function Battlefield({
   isPc,
@@ -199,6 +200,7 @@ export default function Battlefield({
         />
       ) : null}
       <table
+        id={`table-battlefield-${isPlayer ? 'player' : 'enemy'}`}
         ref={battlefieldTable}
         className={`relative m-0 border-spacing-0.5 border-separate`}
         onClick={handleBattlefieldClick}
@@ -211,6 +213,9 @@ export default function Battlefield({
           isMobile,
         })}
       </table>
+      {!isMobile ? (
+        <CombatStats player={gameState[isPlayer ? 'player' : 'enemy']} />
+      ) : null}
     </div>
   );
 }

@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
         className={`${inter.className} flex flex-col min-h-screen overflow-x-hidden`}
         suppressHydrationWarning={true}
       >
-        <Toaster closeButton />
+        <Toaster closeButton theme="system" richColors />
         <header>
           <Navbar />
         </header>
