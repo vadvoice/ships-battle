@@ -206,7 +206,7 @@ export default function Game() {
 
   const onJoinRoom = async (roomName) => {
     await socket.emit('room_connection_request', roomName);
-    toast('Joined to the room!');
+    toast.success('Joined to the room!');
     setGameSetup({
       ...gameSetup,
       roomName,
