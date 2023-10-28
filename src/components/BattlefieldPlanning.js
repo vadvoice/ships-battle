@@ -117,7 +117,7 @@ export default function BattlefieldPlanning({
     hightlightShipOnBattlefield(e.target);
   };
 
-  const resetFleet = () => {
+  const resetFleet = async () => {
     setBattlefield(initialBattlefieldSetup);
     const cells = battlefieldTable.current.querySelectorAll('td');
 
@@ -140,7 +140,11 @@ export default function BattlefieldPlanning({
 
     // TODO: should i move it to the helpers or some sort of animation sets?
     await animate('table', { y: 0 }, { duration: 0.1, ease: 'easeInOut' });
-    await animate('table', { y: 10, rotate: Math.round(Math.random()) ? 10 : -10, scale: 0.95 }, { duration: 0.3, ease: 'easeInOut' });
+    await animate(
+      'table',
+      { y: 10, rotate: Math.round(Math.random()) ? 10 : -10, scale: 0.85 },
+      { duration: 0.3, ease: 'easeInOut' }
+    );
 
     setBattlefield({
       ...battlefield,
@@ -149,11 +153,15 @@ export default function BattlefieldPlanning({
       currentShipIndex: battlefield.shipDetails.length,
       fleet,
     });
-    await animate('table', { y: 0,  rotate: 0, scale: 1 }, { duration: 0.1, ease: 'easeOut' });
+    await animate(
+      'table',
+      { y: 0, rotate: 0, scale: 1 },
+      { duration: 0.1, ease: 'easeOut' }
+    );
   };
 
   const autoGenerate = () => {
-    resetFleet();
+    resetFleet(true);
     genericFleet();
   };
 
@@ -246,7 +254,33 @@ export default function BattlefieldPlanning({
         <BattlefieldSettings
           gameState={battlefield}
           actions={{
-            onReset: resetFleet,
+            // TODO: redo...xd xd xd
+            onReset: async () => {
+              await animate(
+                'table',
+                {
+                  y: 10,
+                  rotate: Math.round(Math.random()) ? -Math.round(Math.random() * 100) : Math.round(Math.random() * 100),
+                  scale: 0.85,
+                },
+                { duration: 0.1, ease: 'easeInOut' }
+              );
+              resetFleet();
+
+              await animate(
+                'table',
+                {
+                  y: 10,
+                  rotate: Math.round(Math.random()) ? -Math.round(Math.random() * 100) : Math.round(Math.random() * 100),
+                  scale: 0.85,
+                },
+                { duration: 0.1, ease: 'easeInOut' }
+              );
+              await animate(
+                'table',
+                { y: 0, x: 0, rotate: 0, scale: 1 },
+              );
+            },
             autoGenerate,
             onPositionChange,
             onReady,

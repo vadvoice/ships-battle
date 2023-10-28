@@ -18,10 +18,6 @@ export default function BattlefieldSettings({
 
   return (
     <div className="flex justify-between p-2 mt-5 flex-col">
-      <h4 className="text-center text-xl font-bold dark:text-white">
-        Actions:
-      </h4>
-
       <div className="flex justify-between items-center">
         <Button color="blue" onClick={autoGenerate}>
           <MdSync className="mr-2 h-5 w-5" />
