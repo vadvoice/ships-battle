@@ -233,9 +233,7 @@ export default function Battlefield({
           isMobile,
         })}
       </table>
-      {!isMobile ? (
-        <CombatStats player={gameState[isPlayer ? 'player' : 'enemy']} />
-      ) : null}
+      <CombatStats player={gameState[isPlayer ? 'player' : 'enemy']} />
     </div>
   );
 }
