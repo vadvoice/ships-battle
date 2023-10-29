@@ -161,7 +161,7 @@ export default function Game() {
     setGameSetup(nextGameState);
     socket && socket.emit('user_send_battle_action', nextGameState);
 
-    if (shot.status === 'hit') {
+    if (shot.status === 'hit' && !isGameOver) {
       await animate(
         `#table-battlefield-${oppenentSide}`,
         { scale: 1.05 },

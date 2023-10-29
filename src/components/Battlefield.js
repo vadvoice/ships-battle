@@ -194,6 +194,25 @@ export default function Battlefield({
     } else {
       battlefieldCell.classList.add(`after:content-['⚫']`);
     }
+
+    // highlight sunc ships
+    battlefield.fleet.map((el) => {
+      if (el.isSunk) {
+        el.position.map((ship) => {
+          let cell = ship.ref;
+
+          if (!cell) {
+            cell = battlefieldTable.current.querySelector(
+              `td[data-index="${ship.x}"][data-row="${ship.y}"]`
+            );
+          }
+          if (!cell) {
+            return;
+          }
+          cell.classList.add(el.color);
+        });
+      }
+    });
   };
 
   return (
