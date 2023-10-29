@@ -1,8 +1,10 @@
+import { useWindowSize } from '@/hooks/useWindowSize';
 import { Badge, Tooltip } from 'flowbite-react';
 import { motion } from 'framer-motion';
 
 export const CombatStats = ({ player }) => {
   const { fleet } = player;
+  const { isMobile } = useWindowSize();
 
   if (!fleet) {
     return <></>;
@@ -19,15 +21,15 @@ export const CombatStats = ({ player }) => {
             whileHover={{ scale: 1.1 }}
           >
             <Tooltip
-              placement="bottom"
-              content={`${ship.isDamaged ? 'Damaged' : 'Afloat'} ${
-                ship.isSunk ? '& Sunk' : ''
-              }`}
+              placement={isMobile ? 'top' : 'bottom'}
+              content={`${isMobile ? ship.name.toUpperCase() : ''} ${
+                ship.isDamaged ? 'Damaged' : 'Afloat'
+              } ${ship.isSunk ? '& Sunk' : ''}`}
             >
               <div
-                className={`${ship.color} capitalize rounded p-1 font-semibold`}
+                className={`${ship.color} capitalize rounded p-1 font-semibold min-h-20`}
               >
-                {ship.name}
+                {isMobile ? `${ship.name.charAt(0)}` : ship.name}
                 <div className="flex justify-around">
                   {ship.isDamaged ? (
                     <Badge className="w-2 h-2" color="warning" />

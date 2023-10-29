@@ -3,13 +3,15 @@
 import { GAME_STAGES } from '@/libs/config';
 import { Button } from 'flowbite-react';
 import { MdSync, MdOutlineUndo, MdDone, MdEast, MdSouth } from 'react-icons/md';
-import { Divider } from './Divider';
+import { Divider, HorizontalDivider } from './Divider';
 import { motion } from 'framer-motion';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 export default function BattlefieldSettings({
   actions: { onReset, onPositionChange, onReady, autoGenerate },
   gameState,
 }) {
+  const { isMobile } = useWindowSize();
   const { horizontalPlacement } = gameState;
 
   const isPlanningStage = gameState.stage === GAME_STAGES.planning;
@@ -18,22 +20,28 @@ export default function BattlefieldSettings({
 
   return (
     <div className="flex justify-between p-2 mt-5 flex-col">
-      <div className="flex justify-between items-center">
-        <Button color="blue" onClick={autoGenerate}>
+      <div className="flex justify-between items-center text-xs md:text-base">
+        <Button
+          size={isMobile ? 'xs' : 'md'}
+          color="blue"
+          onClick={autoGenerate}
+        >
           <MdSync className="mr-2 h-5 w-5" />
           Generic
         </Button>
 
         <Divider />
 
-        <Button color="warning" onClick={onReset}>
+        <Button size={isMobile ? 'xs' : 'md'} color="warning" onClick={onReset}>
           <MdOutlineUndo className="mr-2 h-5 w-5" />
           Reset
         </Button>
 
         <Divider />
+
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
           <Button
+            size={isMobile ? 'xs' : 'md'}
             color="success"
             onClick={onReady}
             disabled={!isPlanningStageComplete}
