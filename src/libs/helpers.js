@@ -27,8 +27,8 @@ export function getRandomBetween(min, max) {
  */
 export const getVirtualCoords = (x, y, shipColor = '') => {
   return {
-    x,
-    y,
+    x: +x,
+    y: +y,
     concatenated: `x:${x};y:${y}`,
     // x and y are swapped for the raw value
     raw: `${x}${y}`,

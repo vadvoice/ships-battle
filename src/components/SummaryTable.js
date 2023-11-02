@@ -1,4 +1,5 @@
 import { BATTLEFIELD_SIDES } from '@/libs/config';
+import Image from 'next/image';
 
 export const SummaryTable = ({ gameState }) => {
   return (
@@ -7,7 +8,10 @@ export const SummaryTable = ({ gameState }) => {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
-              Player
+              Player name
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Side
             </th>
             <th scope="col" className="px-6 py-3">
               Shots made
@@ -19,7 +23,7 @@ export const SummaryTable = ({ gameState }) => {
               Accuracy
             </th>
             <th scope="col" className="px-6 py-3">
-              Status
+              Winner
             </th>
           </tr>
         </thead>
@@ -29,8 +33,16 @@ export const SummaryTable = ({ gameState }) => {
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              Alliance
+              {gameState.player.name || 'Alliance'}
             </th>
+            <td className="px-6 py-4">
+              <Image
+                src="/alliance.png"
+                alt="alliance"
+                width={50}
+                height={50}
+              />
+            </td>
             <td className="px-6 py-4">{gameState.player.combatLog.length}</td>
             <td className="px-6 py-4">
               {gameState.player.combatLog.filter((el) => el.isDamaged).length}
@@ -45,8 +57,11 @@ export const SummaryTable = ({ gameState }) => {
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              Horde
+              {gameState.enemy.name || 'Horde'}
             </th>
+            <td className="px-6 py-4">
+              <Image src="/horde.png" alt="horde" width={50} height={50} />
+            </td>
             <td className="px-6 py-4">{gameState.enemy.combatLog.length}</td>
             <td className="px-6 py-4">
               {gameState.enemy.combatLog.filter((el) => el.isDamaged).length}

@@ -25,7 +25,7 @@ export default function Battlefield({
   actions: { onShot },
 }) {
   // TODO: confusing naming and values too
-  const { isMobile } = useWindowSize();
+  const { isMobile, isDesktop } = useWindowSize();
   const isClickAllowed = gameState.whoseTurn === gameState.role;
   const battlefieldTable = useRef();
   const initialBattlefieldSetup = isEnemy ? gameState.enemy : gameState.player;
@@ -226,8 +226,8 @@ export default function Battlefield({
             scale: 0,
           }}
           animate={{
-            x: !isMobile ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.x,
-            y: !isMobile ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.y,
+            x: isDesktop ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.x,
+            y: isDesktop ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.y,
             scale: 1,
           }}
         >
@@ -249,7 +249,7 @@ export default function Battlefield({
       >
         {buildTableContent({
           side: isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy,
-          isMobile,
+          isMobile: isMobile || !isDesktop,
         })}
       </table>
       <CombatStats player={gameState[isPlayer ? 'player' : 'enemy']} />

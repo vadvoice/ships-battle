@@ -18,7 +18,7 @@ export const StatsTable = ({ stats }) => {
               Player name
             </th>
             <th scope="col" className="px-6 py-3">
-              Side
+              Winner Side
             </th>
             <th scope="col" className="px-6 py-3">
               Shots made
@@ -34,7 +34,7 @@ export const StatsTable = ({ stats }) => {
               key={stat.accuracy + index}
               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
-              <td className="px-6 py-4">{stat.nickname}</td>
+              <th className="px-6 py-4">{stat.nickname}</th>
               <td className="px-6 py-4">
                 {stat.winner === BATTLEFIELD_SIDES.player ? (
                   <Image src="/alliance.png" alt="alliance" width={50} height={50} />
