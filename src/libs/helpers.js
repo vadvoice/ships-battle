@@ -27,9 +27,9 @@ export function getRandomBetween(min, max) {
  */
 export const getVirtualCoords = (x, y, shipColor = '') => {
   return {
-    x,
-    y,
-    concatenated: `x:${x};y:${y}`,
+    y: +y,
+    x: +x,
+    concatenated: `y:${y};x:${x}`,
     // x and y are swapped for the raw value
     raw: `${x}${y}`,
     isDamaged: false,
@@ -187,4 +187,9 @@ export function financialFormat(x) {
 
 export const getShootingAccuracy = (shotsMade, hits) => {
   return financialFormat((hits / shotsMade) * 100);
+}
+
+export const SHOT_MARKERS = {
+  hit: '❌',
+  miss: '⚫'
 }
