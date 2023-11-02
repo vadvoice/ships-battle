@@ -21,6 +21,7 @@ import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 import { toast } from 'sonner';
 import { motion, useAnimate } from 'framer-motion';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 export default function Game() {
   const [scope, animate] = useAnimate();
@@ -29,6 +30,7 @@ export default function Game() {
   const gameModeParam = params.get('mode');
   const roleParam = params.get('role');
   const { user } = useUser();
+  const { isMobile } = useWindowSize();
 
   const initialGameSetupState = {
     stage: stageParam ? Number(stageParam) : GAME_STAGES.menu,
@@ -405,17 +407,15 @@ export default function Game() {
       {[GAME_STAGES.planning].includes(gameSetup.stage) ? (
         <div className="w-full flex justify-around items-center flex-1 lg:flex-row flex-col">
           <BattlefieldPlanning
-            socket={socket}
+            data={{ isMobile, isPc: false, socket, gameState: gameSetup }}
             actions={{ onChange: setGameSetup }}
-            gameState={gameSetup}
           />
 
           {isPc ? (
             <BattlefieldPlanning
-              isPc={isPc}
+              data={{ isMobile, isPc: true, socket, gameState: gameSetup }}
               socket={socket}
               actions={{ onChange: setGameSetup }}
-              gameState={gameSetup}
             />
           ) : null}
         </div>
@@ -428,19 +428,20 @@ export default function Game() {
         >
           <motion.div initial={{ x: '-100vw' }} animate={{ x: '0%' }}>
             <Battlefield
-              isPlayer
-              socket={socket}
-              gameState={gameSetup}
+              data={{ isMobile, isPlayer: true, socket, gameState: gameSetup }}
               actions={{ onChange: setGameSetup, onShot }}
             />
           </motion.div>
 
           <motion.div initial={{ x: '100vw' }} animate={{ x: '0%' }}>
             <Battlefield
-              isEnemy
-              isPc={isPc}
-              socket={socket}
-              gameState={gameSetup}
+              data={{
+                isMobile,
+                isEnemy: true,
+                isPc: true,
+                socket,
+                gameState: gameSetup,
+              }}
               actions={{ onChange: setGameSetup, onShot }}
             />
           </motion.div>

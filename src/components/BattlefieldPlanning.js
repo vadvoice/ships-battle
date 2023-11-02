@@ -13,14 +13,11 @@ import {
   isShipPlacementValid,
 } from '@/libs/helpers';
 import BattlefieldSettings from './BattlefieldSettings';
-import { useWindowSize } from '@/hooks/useWindowSize';
 import { motion, useAnimate } from 'framer-motion';
 
 export default function BattlefieldPlanning({
+  data: { isMobile, isPc = false, socket = null, gameState },
   actions: { onChange },
-  gameState,
-  socket,
-  isPc = false,
 }) {
   const [scope, animate] = useAnimate();
   const initialBattlefieldSetup = {
@@ -28,7 +25,6 @@ export default function BattlefieldPlanning({
     role: isPc ? BATTLEFIELD_SIDES.enemy : gameState.role,
     ...INITIAL_BATTLEFIELD_SETUP,
   };
-  const { isMobile } = useWindowSize();
   const [battlefield, setBattlefield] = useState(initialBattlefieldSetup);
   const battlefieldTable = useRef();
   const isPlanningStage = battlefield.stage === GAME_STAGES.planning;
@@ -252,7 +248,7 @@ export default function BattlefieldPlanning({
 
       {!isPc ? (
         <BattlefieldSettings
-          gameState={battlefield}
+          data={{ battlefield, isMobile }}
           actions={{
             // TODO: redo...xd xd xd
             onReset: async () => {
@@ -260,7 +256,9 @@ export default function BattlefieldPlanning({
                 'table',
                 {
                   y: 10,
-                  rotate: Math.round(Math.random()) ? -Math.round(Math.random() * 100) : Math.round(Math.random() * 100),
+                  rotate: Math.round(Math.random())
+                    ? -Math.round(Math.random() * 100)
+                    : Math.round(Math.random() * 100),
                   scale: 0.85,
                 },
                 { duration: 0.1, ease: 'easeInOut' }
@@ -271,15 +269,14 @@ export default function BattlefieldPlanning({
                 'table',
                 {
                   y: 10,
-                  rotate: Math.round(Math.random()) ? -Math.round(Math.random() * 100) : Math.round(Math.random() * 100),
+                  rotate: Math.round(Math.random())
+                    ? -Math.round(Math.random() * 100)
+                    : Math.round(Math.random() * 100),
                   scale: 0.85,
                 },
                 { duration: 0.1, ease: 'easeInOut' }
               );
-              await animate(
-                'table',
-                { y: 0, x: 0, rotate: 0, scale: 1 },
-              );
+              await animate('table', { y: 0, x: 0, rotate: 0, scale: 1 });
             },
             autoGenerate,
             onPositionChange,

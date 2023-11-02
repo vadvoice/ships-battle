@@ -3,20 +3,18 @@
 import { GAME_STAGES } from '@/libs/config';
 import { Button } from 'flowbite-react';
 import { MdSync, MdOutlineUndo, MdDone, MdEast, MdSouth } from 'react-icons/md';
-import { Divider, HorizontalDivider } from './Divider';
+import { Divider } from './Divider';
 import { motion } from 'framer-motion';
-import { useWindowSize } from '@/hooks/useWindowSize';
 
 export default function BattlefieldSettings({
   actions: { onReset, onPositionChange, onReady, autoGenerate },
-  gameState,
+  data: { battlefield, isMobile },
 }) {
-  const { isMobile } = useWindowSize();
-  const { horizontalPlacement } = gameState;
+  const { horizontalPlacement } = battlefield;
 
-  const isPlanningStage = gameState.stage === GAME_STAGES.planning;
+  const isPlanningStage = battlefield.stage === GAME_STAGES.planning;
   const isPlanningStageComplete =
-    gameState.stage === GAME_STAGES.planningComplete;
+    battlefield.stage === GAME_STAGES.planningComplete;
 
   return (
     <div className="flex justify-between p-2 mt-5 flex-col">

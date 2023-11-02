@@ -1,10 +1,8 @@
-import { useWindowSize } from '@/hooks/useWindowSize';
 import { Badge, Tooltip } from 'flowbite-react';
 import { motion } from 'framer-motion';
 
-export const CombatStats = ({ player }) => {
+export const CombatStats = ({ player, isMobile }) => {
   const { fleet } = player;
-  const { isMobile } = useWindowSize();
 
   if (!fleet) {
     return <></>;
@@ -30,6 +28,7 @@ export const CombatStats = ({ player }) => {
                 className={`${ship.color} capitalize rounded p-1 font-semibold min-h-20`}
               >
                 {isMobile ? `${ship.name.charAt(0)}` : ship.name}
+                {ship.isSunk && '❌'}
                 <div className="flex justify-around">
                   {ship.isDamaged ? (
                     <Badge className="w-2 h-2" color="warning" />

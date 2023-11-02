@@ -13,19 +13,20 @@ import Image from 'next/image';
 import TargetImage from '../../public/target.png';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { useWindowSize } from '@/hooks/useWindowSize';
 import { CombatStats } from './CombatStats';
 import { motion } from 'framer-motion';
 
 export default function Battlefield({
-  isPc,
-  isPlayer,
-  isEnemy,
-  gameState,
+  data: {
+    isPc = false,
+    isPlayer = false,
+    isEnemy = false,
+    isMobile,
+    gameState,
+  },
   actions: { onShot },
 }) {
   // TODO: confusing naming and values too
-  const { isMobile, isDesktop } = useWindowSize();
   const isClickAllowed = gameState.whoseTurn === gameState.role;
   const battlefieldTable = useRef();
   const initialBattlefieldSetup = isEnemy ? gameState.enemy : gameState.player;
@@ -111,11 +112,13 @@ export default function Battlefield({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState[enemySide].combatLog]);
 
+  // render own fleet placement
   useEffect(() => {
     if (
       !battlefield.fleet.length ||
       isPc ||
-      battlefield.role !== gameState.role
+      battlefield.role !== gameState.role ||
+      battlefieldTable.current === null
     ) {
       return;
     }
@@ -135,11 +138,8 @@ export default function Battlefield({
         cell.classList.add(ship.shipColor);
       });
     });
-    if (isPc) {
-      return;
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [battlefield.fleet, isPc]);
+  }, [isMobile, battlefield.fleet, isPc, battlefieldTable]);
 
   const handleBattlefieldClick = (e) => {
     if (e.target.tagName !== 'TD') {
@@ -226,8 +226,8 @@ export default function Battlefield({
             scale: 0,
           }}
           animate={{
-            x: isDesktop ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.x,
-            y: isDesktop ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.y,
+            x: !isMobile ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.x,
+            y: !isMobile ? TARGET_POSITION.desktop.y : TARGET_POSITION.mobile.y,
             scale: 1,
           }}
         >
@@ -249,10 +249,13 @@ export default function Battlefield({
       >
         {buildTableContent({
           side: isPlayer ? BATTLEFIELD_SIDES.player : BATTLEFIELD_SIDES.enemy,
-          isMobile: isMobile || !isDesktop,
+          isMobile,
         })}
       </table>
-      <CombatStats player={gameState[isPlayer ? 'player' : 'enemy']} />
+      <CombatStats
+        player={gameState[isPlayer ? 'player' : 'enemy']}
+        isMobile={isMobile}
+      />
     </div>
   );
 }
