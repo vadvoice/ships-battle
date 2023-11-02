@@ -5,6 +5,7 @@ import {
   TARGET_POSITION,
 } from '@/libs/config';
 import {
+  SHOT_MARKERS,
   buildTableContent,
   getRandomShotCoords,
   getVirtualCoords,
@@ -26,15 +27,14 @@ export default function Battlefield({
   },
   actions: { onShot },
 }) {
-  // TODO: confusing naming and values too
-  const isClickAllowed = gameState.whoseTurn === gameState.role;
   const battlefieldTable = useRef();
-  const initialBattlefieldSetup = isEnemy ? gameState.enemy : gameState.player;
-  const [battlefield] = useState(initialBattlefieldSetup);
+  let activeCell = null;
+
+  const isClickAllowed = gameState.whoseTurn === gameState.role;
+  const ownBattlefield = isEnemy ? gameState.enemy : gameState.player;
   const enemySide = isPlayer
     ? BATTLEFIELD_SIDES.enemy
     : BATTLEFIELD_SIDES.player;
-  let activeCell = null;
 
   const onMouseMove = (e) => {
     if (e.target.tagName !== 'TD') {
@@ -78,9 +78,7 @@ export default function Battlefield({
       while (!isShotValid) {
         const randomCoords = getRandomShotCoords();
         if (
-          gameState[enemySide].combatLog.some(
-            (el) => el.raw === randomCoords.raw
-          )
+          gameState.enemy.combatLog.some((el) => el.raw === randomCoords.raw)
         ) {
           continue;
         }
@@ -92,7 +90,7 @@ export default function Battlefield({
 
     makeShot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isClickAllowed, gameState.whoseTurn, isPc]);
+  }, [isClickAllowed, gameState.whoseTurn, isPc, gameState.enemy.combatLog]);
 
   // once compat log is changed, we need to highlight the last shot on the enemy battlefield
   useEffect(() => {
@@ -115,15 +113,15 @@ export default function Battlefield({
   // render own fleet placement
   useEffect(() => {
     if (
-      !battlefield.fleet.length ||
+      !ownBattlefield.fleet.length ||
       isPc ||
-      battlefield.role !== gameState.role ||
+      ownBattlefield.role !== gameState.role ||
       battlefieldTable.current === null
     ) {
       return;
     }
 
-    battlefield.fleet.map((el) => {
+    ownBattlefield.fleet.map((el) => {
       el.position.map((ship) => {
         let cell = ship.ref;
 
@@ -139,7 +137,7 @@ export default function Battlefield({
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobile, battlefield.fleet, isPc, battlefieldTable]);
+  }, [isMobile, ownBattlefield.fleet, isPc, battlefieldTable]);
 
   const handleBattlefieldClick = (e) => {
     if (e.target.tagName !== 'TD') {
@@ -168,19 +166,18 @@ export default function Battlefield({
     onShot({ shot: coords });
   };
 
+  // render oponnent fleet placement
   const hightlightCombatLog = (coords) => {
     const battlefieldCell = battlefieldTable.current.querySelector(
       `td[data-index="${coords.x}"][data-row="${coords.y}"]`
     );
 
-    if (
-      !battlefieldCell ||
-      battlefield.combatLog.some((el) => el.raw === coords.raw)
-    ) {
+    if (!battlefieldCell) {
+      console.warn('battlefieldCell is not found');
       return;
     }
 
-    const isCellContainsShip = battlefield.fleet.some((el) => {
+    const isCellContainsShip = ownBattlefield.fleet.some((el) => {
       return el.position.some((ship) => {
         return (
           ship.raw ===
@@ -190,13 +187,13 @@ export default function Battlefield({
     });
 
     if (isCellContainsShip) {
-      battlefieldCell.classList.add(`after:content-['❌']`);
+      battlefieldCell.classList.add(`after:content-['${SHOT_MARKERS.hit}']`);
     } else {
-      battlefieldCell.classList.add(`after:content-['⚫']`);
+      battlefieldCell.classList.add(`after:content-['${SHOT_MARKERS.miss}']`);
     }
 
     // highlight sunc ships
-    battlefield.fleet.map((el) => {
+    ownBattlefield.fleet.map((el) => {
       if (el.isSunk) {
         el.position.map((ship) => {
           let cell = ship.ref;

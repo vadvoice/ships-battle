@@ -1,5 +1,6 @@
 import { BATTLEFIELD_SIDES } from '@/libs/config';
 import Image from 'next/image';
+import { MdClose, MdDoneOutline } from 'react-icons/md';
 
 export const SummaryTable = ({ gameState }) => {
   return (
@@ -49,7 +50,11 @@ export const SummaryTable = ({ gameState }) => {
             </td>
             <td className="px-6 py-4">{gameState.player.accuracy}%</td>
             <td className="px-6 py-4">
-              {gameState.winner === BATTLEFIELD_SIDES.player ? '✅' : '❌'}
+              {gameState.winner === BATTLEFIELD_SIDES.player ? (
+                <MdDoneOutline />
+              ) : (
+                <MdClose />
+              )}
             </td>
           </tr>
           <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -68,7 +73,11 @@ export const SummaryTable = ({ gameState }) => {
             </td>
             <td className="px-6 py-4">{gameState.enemy.accuracy}%</td>
             <td className="px-6 py-4">
-              {gameState.winner === BATTLEFIELD_SIDES.enemy ? '✅' : '❌'}
+              {gameState.winner === BATTLEFIELD_SIDES.enemy ? (
+                <MdDoneOutline />
+              ) : (
+                <MdClose />
+              )}
             </td>
           </tr>
         </tbody>

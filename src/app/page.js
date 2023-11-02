@@ -156,7 +156,7 @@ export default function Game() {
           gameSetup[oppenentSide].combatLog.filter((el) => el.isDamaged).length
         ),
       },
-      whoseTurn: oppenentSide,
+      whoseTurn: shot.status === 'hit' ? whoseTurn : oppenentSide,
       stage: isGameOver ? GAME_STAGES.gameover : GAME_STAGES.ongoing,
       winner: whoseTurn,
     };
@@ -413,7 +413,7 @@ export default function Game() {
 
           {isPc ? (
             <BattlefieldPlanning
-              data={{ isMobile, isPc: true, socket, gameState: gameSetup }}
+              data={{ isMobile, isPc, socket, gameState: gameSetup }}
               socket={socket}
               actions={{ onChange: setGameSetup }}
             />
@@ -438,7 +438,7 @@ export default function Game() {
               data={{
                 isMobile,
                 isEnemy: true,
-                isPc: true,
+                isPc,
                 socket,
                 gameState: gameSetup,
               }}
