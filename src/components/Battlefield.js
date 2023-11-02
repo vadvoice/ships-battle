@@ -187,9 +187,9 @@ export default function Battlefield({
     });
 
     if (isCellContainsShip) {
-      battlefieldCell.classList.add(`after:content-['${SHOT_MARKERS.hit}']`);
+      battlefieldCell.classList.add(`after:content-['❌']`);
     } else {
-      battlefieldCell.classList.add(`after:content-['${SHOT_MARKERS.miss}']`);
+      battlefieldCell.classList.add( `after:content-['⚫']`);
     }
 
     // highlight sunc ships
